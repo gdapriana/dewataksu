@@ -1,0 +1,35 @@
+"use client";
+import AuthArea from "@/app/(root)/(client)/_components/header/auth";
+import { Navigation } from "@/app/(root)/(client)/_components/header/naviagation";
+import { Button } from "@/components/ui/button";
+import { District } from "@prisma/client";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
+
+export default function Header({ districts }: { districts: District[] }) {
+  const { setTheme, theme } = useTheme();
+  return (
+    <header className="w-full flex justify-center items-center">
+      <div className="max-w-7xl py-4 w-full relative px-4">
+        <div className="absolute flex px-4 h-full justify-center items-center z-10 left-0 top-[50%] bottom-[50%] translate-y-[-50%]">
+          brand
+        </div>
+        <div className="z-0 h-[50px] md:h-auto w-full flex justify-center items-center">
+          <Navigation districts={districts} />
+        </div>
+        <div className="absolute h-full px-4 gap-2 flex justify-center items-center z-10 right-0 top-[50%] bottom-[50%] translate-y-[-50%]">
+          <AuthArea />
+          {theme === "light" ? (
+            <Button size="icon" onClick={() => setTheme("dark")}>
+              <Moon />
+            </Button>
+          ) : (
+            <Button size="icon" onClick={() => setTheme("light")}>
+              <Sun />
+            </Button>
+          )}
+        </div>
+      </div>
+    </header>
+  );
+}

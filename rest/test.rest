@@ -1,0 +1,8 @@
+POST http://localhost:3000/api/view
+Accept: application/json
+
+{
+    "schema": "destinations",
+    "userId": "cmfpgjgu3000304kwgmowh3x9",
+    "schemaId": "cmfpgjgu3000304kwgmowh3x9"
+}

@@ -1,0 +1,71 @@
+model User {
+    id               String   @id @default(cuid())
+    name             String
+    email            String
+    emailVerified    Boolean  @default(false)
+    image            String?
+    createdAt        DateTime @default(now())
+    updatedAt        DateTime @updatedAt
+    profileImageId   String?
+    twoFactorEnabled Boolean  @default(false)
+    role             Role     @default(USER)
+    profileImage     Image?   @relation(fields: [profileImageId], references: [id], onDelete: Cascade)
+
+    stories      Story[]
+    likes        Like[]
+    bookmarks    Bookmark[]
+    comments     Comment[]
+    Session      Session[]
+    Account      Account[]
+    activityLogs ActivityLog[]
+    views        View[]
+
+    @@unique([email])
+    @@map("user")
+}
+
+model Session {
+    id        String   @id @default(cuid())
+    expiresAt DateTime
+    token     String   @unique
+    ipAddress String?
+    userAgent String?
+    userId    String
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("session")
+}
+
+model Account {
+    id           String    @id @default(cuid())
+    accountId    String
+    providerId   String
+    userId       String
+    user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    accessToken  String?
+    refreshToken String?
+    idToken      String?
+    expiresAt    DateTime?
+    password     String?
+    createdAt    DateTime  @default(now())
+    updatedAt    DateTime  @updatedAt
+
+    accessTokenExpiresAt  DateTime?
+    refreshTokenExpiresAt DateTime?
+    scope                 String?
+
+    @@map("account")
+}
+
+model Verification {
+    id         String    @id @default(cuid())
+    identifier String
+    value      String
+    expiresAt  DateTime
+    createdAt  DateTime? @default(now())
+    updatedAt  DateTime? @updatedAt
+
+    @@map("verification")
+}

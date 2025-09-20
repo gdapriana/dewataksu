@@ -3,7 +3,8 @@ export class DestinationRequests {
     const q = query ? `?${query}` : "";
     try {
       const response = await fetch(
-        `${process.env.BETTER_AUTH_URL}/api/destinations${q}`
+        `${process.env.BETTER_AUTH_URL}/api/destinations${q}`,
+        { cache: "no-store" }
       );
       const data = await response.json();
       return data;

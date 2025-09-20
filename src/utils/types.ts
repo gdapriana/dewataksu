@@ -16,6 +16,31 @@ export type CategoryRelation = Prisma.CategoryGetPayload<{
   };
 }>;
 
+export type StoryRelation = Prisma.StoryGetPayload<{
+  include: {
+    _count: true;
+    author: true;
+    bookmarks: true;
+    comments: true;
+    cover: true;
+    likes: true;
+    views: true;
+  };
+}>;
+
+export type TraditionRelation = Prisma.TraditionGetPayload<{
+  include: {
+    _count: true;
+    district: true;
+    bookmarks: true;
+    comments: true;
+    cover: true;
+    galleries: true;
+    likes: true;
+    views: true;
+  };
+}>;
+
 export type DestinationRelation = Prisma.DestinationGetPayload<{
   include: {
     cover: true;

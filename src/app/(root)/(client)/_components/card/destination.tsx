@@ -7,7 +7,6 @@ import {
 } from "@/components/ui/tooltip";
 import formatNumber from "@/utils/helpers";
 import { DestinationRelation } from "@/utils/types";
-import { Destination } from "@prisma/client";
 import {
   Bookmark,
   Eye,

@@ -88,6 +88,7 @@ export async function POST(req: NextRequest) {
     if (e instanceof ZodError) {
       return ErrorResponseMessage.ZOD_ERROR(e);
     }
+    console.log(e);
     return ErrorResponseMessage.INTERNAL_SERVER_ERROR();
   }
 }

@@ -1,4 +1,4 @@
-import DestinationCard from "@/app/(root)/(client)/_components/card/destination";
+import { DestinationCard } from "@/app/(root)/(client)/_components/card/destination";
 import SectionHeader from "@/app/(root)/(client)/_components/header/section-header";
 import { DestinationRelation } from "@/utils/types";
 export default function PopularDesinations({

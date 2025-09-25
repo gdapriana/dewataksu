@@ -21,3 +21,5 @@ export const auth = betterAuth({
     maxPasswordLength: 20,
   },
 });
+
+export type Session = typeof auth.$Infer.Session;

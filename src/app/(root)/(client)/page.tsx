@@ -46,7 +46,6 @@ export default async function Home() {
       <PopularDesinations
         destinations={popularDestinations.result.destinations}
       />
-
       <PopularCategories categories={popularCategories.result.categories} />
       <PopularTraditions traditions={popularTraditions.result.traditions} />
       <PopularStories stories={popularStories.result.stories} />

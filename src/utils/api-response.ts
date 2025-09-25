@@ -62,7 +62,7 @@ export class ErrorResponseMessage {
 
   static NOT_FOUND(schema: DB_SCHEMA | string) {
     return NextResponse.json(
-      { errors: `${schema} not found.` },
+      { errors: `${schema} not found.`, success: false },
       { status: 404 }
     );
   }

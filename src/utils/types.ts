@@ -19,7 +19,18 @@ export type CategoryRelation = Prisma.CategoryGetPayload<{
 export type StoryRelation = Prisma.StoryGetPayload<{
   include: {
     _count: true;
-    author: true;
+    author: {
+      select: {
+        name: true;
+        email: true;
+        image: true;
+        profileImage: {
+          select: {
+            url: true;
+          };
+        };
+      };
+    };
     bookmarks: true;
     comments: true;
     cover: true;
@@ -40,6 +51,40 @@ export type TraditionRelation = Prisma.TraditionGetPayload<{
     views: true;
   };
 }>;
+
+export type BaseComment = Prisma.CommentGetPayload<{
+  select: {
+    id: true;
+    body: true;
+    createdAt: true;
+    parentId: true;
+    author: {
+      select: {
+        id: true;
+        name: true;
+        profileImage: {
+          select: {
+            url: true;
+          };
+        };
+      };
+    };
+    replies: true;
+    parent: {
+      select: {
+        author: {
+          select: {
+            name: true;
+          };
+        };
+      };
+    };
+  };
+}>;
+
+export type NestedComment = BaseComment & {
+  replies: NestedComment[];
+};
 
 export type DestinationRelation = Prisma.DestinationGetPayload<{
   include: {

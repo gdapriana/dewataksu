@@ -120,3 +120,12 @@
     @apply bg-background text-foreground;
   }
 }
+
+.card-gradient {
+  background: rgba(0, 0, 0, 4.2);
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.42) 0%,
+    rgba(237, 221, 83, 0) 100%
+  );
+}

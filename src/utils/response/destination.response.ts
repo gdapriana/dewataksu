@@ -49,25 +49,6 @@ export class DestinationResponses {
         },
       },
     },
-    comments: {
-      select: {
-        id: true,
-        body: true,
-        author: {
-          select: {
-            id: true,
-            name: true,
-            profileImage: {
-              select: {
-                url: true,
-              },
-            },
-          },
-        },
-        replies: true,
-        createdAt: true,
-      },
-    },
     _count: true,
   };
   static readonly GETs: Prisma.DestinationSelect = {

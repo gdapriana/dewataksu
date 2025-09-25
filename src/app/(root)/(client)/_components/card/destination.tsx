@@ -5,7 +5,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import formatNumber from "@/utils/helpers";
+import { cn } from "@/lib/utils";
+import { formatNumber } from "@/utils/helpers";
 import { DestinationRelation } from "@/utils/types";
 import {
   Bookmark,
@@ -19,11 +20,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 
-export default function DestinationCard({
-  item,
-}: {
-  item: DestinationRelation;
-}) {
+export function DestinationCard({ item }: { item: DestinationRelation }) {
   return (
     <Link
       href={`/destinations/${item.slug}`}
@@ -112,6 +109,63 @@ export default function DestinationCard({
             <TooltipContent>District</TooltipContent>
           </Tooltip>
         </div>
+      </div>
+    </Link>
+  );
+}
+
+export function DestinationMiniCard({
+  item,
+  isEnd,
+}: {
+  item: DestinationRelation;
+  isEnd?: boolean;
+}) {
+  return (
+    <Link
+      className={cn(
+        "py-4 flex flex-col justify-start items-stretch",
+        !isEnd && "border-b"
+      )}
+      href={`/destinations/${item.slug}`}
+    >
+      <div className="flex gap-4 justify-center items-stretch">
+        <div className="w-[100px] bg-muted-foreground/10 rounded-lg overflow-hidden flex justify-center items-center">
+          {item.cover?.url ? (
+            <Image
+              width={1000}
+              height={1000}
+              alt={item.name}
+              src={item.cover.url}
+              quality={25}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <ImageOff className="w-4 h-4" />
+          )}
+        </div>
+        <div className="flex flex-1 flex-col justify-center items-start">
+          <h3 className="font-bold">{item.name}</h3>
+          <p className="line-clamp-2 text-sm text-muted-foreground">
+            {item.content}
+          </p>
+        </div>
+      </div>
+      <div className="flex gap-1 mt-4 justify-end items-center flex-wrap">
+        <Badge variant="outline">
+          <Layers /> {item.category.name}
+        </Badge>
+        <Badge variant="outline">
+          <Eye /> {formatNumber(item?._count.views)}
+        </Badge>
+        {item.price == 0 && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Badge variant="outline">Free</Badge>
+            </TooltipTrigger>
+            <TooltipContent>Free Entry</TooltipContent>
+          </Tooltip>
+        )}
       </div>
     </Link>
   );

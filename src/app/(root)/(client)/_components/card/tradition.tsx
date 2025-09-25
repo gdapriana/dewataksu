@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip";
-import formatNumber from "@/utils/helpers";
+import { formatNumber } from "@/utils/helpers";
 import { TraditionRelation } from "@/utils/types";
 import { TooltipContent } from "@radix-ui/react-tooltip";
 import { Bookmark, Eye, Heart, Map, MapPin } from "lucide-react";

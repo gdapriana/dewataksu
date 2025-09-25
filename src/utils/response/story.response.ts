@@ -36,6 +36,18 @@ export class StoryResponses {
     slug: true,
     content: true,
     isPublished: true,
+    author: {
+      select: {
+        name: true,
+        email: true,
+        image: true,
+        profileImage: {
+          select: {
+            url: true,
+          },
+        },
+      },
+    },
     cover: {
       select: {
         id: true,

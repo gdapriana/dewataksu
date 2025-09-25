@@ -1,4 +1,6 @@
-export default function formatNumber(
+import { NestedComment } from "@/utils/types";
+
+export function formatNumber(
   value: number | null | undefined,
   digits = 1
 ): string {
@@ -21,4 +23,22 @@ export default function formatNumber(
     return `${value < 0 ? "-" : ""}${format(abs / 1_000)}k`;
   }
   return value.toString();
+}
+
+export function flattenReplies(comments: NestedComment[]): NestedComment[] {
+  return comments.map((comment: NestedComment) => {
+    let allReplies: NestedComment[] = [];
+
+    function collectReplies(replies: NestedComment[]) {
+      replies.forEach((reply) => {
+        allReplies.push(reply);
+        if (reply.replies && reply.replies.length > 0) {
+          collectReplies(reply.replies);
+        }
+      });
+    }
+
+    collectReplies(comment.replies);
+    return { ...comment, replies: allReplies } as NestedComment;
+  });
 }

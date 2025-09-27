@@ -1,5 +1,7 @@
 import { Prisma } from "@prisma/client";
 
+export type MainSchema = "destinations" | "traditions" | "stories";
+
 export interface Pagination {
   page: number;
   limit: number;

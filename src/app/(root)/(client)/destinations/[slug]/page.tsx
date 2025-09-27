@@ -67,10 +67,16 @@ export default async function Page({
             <DestinationHero item={destination.result} />
             <DestinationContent item={destination.result} />
             <Map url={destination.result.mapUrl} />
-            <Comments session={session} comments={comments.result.comments} />
+            <Comments
+              schema="destinations"
+              schemaId={destination.result.id}
+              session={session}
+              comments={comments.result.comments}
+            />
           </div>
           <div className="md:w-1/3">
             <RelatedDestinations
+              currentDestination={destination.result}
               items={relatedDestinations.result.destinations}
             />
           </div>

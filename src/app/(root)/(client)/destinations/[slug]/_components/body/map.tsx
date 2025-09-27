@@ -1,3 +1,6 @@
+import Empty from "@/app/(root)/(client)/_components/empty/empty";
+import { MapMinus } from "lucide-react";
+
 export default function Map({ url }: { url?: string | null }) {
   return (
     <div className="w-full mt-8">
@@ -8,7 +11,7 @@ export default function Map({ url }: { url?: string | null }) {
           </iframe>
         </div>
       ) : (
-        <p>No map provided</p>
+        <Empty Icon={MapMinus} item="map" />
       )}
     </div>
   );

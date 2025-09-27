@@ -49,7 +49,7 @@ export async function GET(
       }
       return NextResponse.json({
         result: { comments: topLevelComments },
-        ...apiSuccessResponse("GETS", "DESTINATION"),
+        ...apiSuccessResponse("GETS", "COMMENT"),
       });
     } else if (valdatedParams.schema === "traditions") {
       const topLevelComments = await table.findMany({

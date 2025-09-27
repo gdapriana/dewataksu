@@ -25,8 +25,9 @@ export type DB_SCHEMA =
   | "bookmark";
 
 type Actions = "CREATE" | "UPDATE" | "DELETE" | "GET" | "GETS";
+type ExtendSchema = Schema | "COMMENT";
 
-export const apiSuccessResponse = (actions: Actions, schema: Schema) => {
+export const apiSuccessResponse = (actions: Actions, schema: ExtendSchema) => {
   return {
     success: true,
     message: `${actions} ${schema} SUCCESSFULLY`,

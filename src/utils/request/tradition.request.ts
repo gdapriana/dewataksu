@@ -3,7 +3,7 @@ export class TraditionRequests {
     const q = query ? `?${query}` : "";
     try {
       const response = await fetch(
-        `${process.env.BETTER_AUTH_URL}/api/traditions${q}`,
+        `${process.env.NEXT_PUBLIC_BETTER_AUTH_URL}/api/traditions${q}`,
         {
           cache: "no-store",
         }

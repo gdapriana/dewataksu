@@ -3,7 +3,7 @@ export class StoryRequests {
     const q = query ? `?${query}` : "";
     try {
       const response = await fetch(
-        `${process.env.BETTER_AUTH_URL}/api/stories${q}`,
+        `${process.env.NEXT_PUBLIC_BETTER_AUTH_URL}/api/stories${q}`,
         {
           cache: "no-store",
         }

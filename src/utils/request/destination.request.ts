@@ -2,7 +2,7 @@ export class DestinationRequests {
   static async GET(slug: string) {
     try {
       const response = await fetch(
-        `${process.env.BETTER_AUTH_URL}/api/destinations/${slug}`,
+        `${process.env.NEXT_PUBLIC_BETTER_AUTH_URL}/api/destinations/${slug}`,
         { cache: "no-store" }
       );
       const data = await response.json();
@@ -15,7 +15,7 @@ export class DestinationRequests {
     const q = query ? `?${query}` : "";
     try {
       const response = await fetch(
-        `${process.env.BETTER_AUTH_URL}/api/destinations${q}`,
+        `${process.env.NEXT_PUBLIC_BETTER_AUTH_URL}/api/destinations${q}`,
         { cache: "no-store" }
       );
       const data = await response.json();

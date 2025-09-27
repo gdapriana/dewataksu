@@ -5,8 +5,10 @@ import React from "react";
 
 export default function RelatedDestinations({
   items,
+  currentDestination,
 }: {
   items: DestinationRelation[];
+  currentDestination: DestinationRelation;
 }) {
   return (
     <div className="flex flex-col gap-4 justify-start items-stretch">
@@ -19,6 +21,7 @@ export default function RelatedDestinations({
       <div className="flex flex-col justify-start items-stretch">
         {items.map((item: DestinationRelation, idx: number) => (
           <DestinationMiniCard
+            currentDestination={currentDestination}
             isEnd={idx === items.length - 1}
             item={item}
             key={item.id}

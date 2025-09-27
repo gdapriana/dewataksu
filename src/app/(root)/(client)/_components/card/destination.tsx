@@ -115,9 +115,11 @@ export function DestinationCard({ item }: { item: DestinationRelation }) {
 }
 
 export function DestinationMiniCard({
+  currentDestination,
   item,
   isEnd,
 }: {
+  currentDestination: DestinationRelation;
   item: DestinationRelation;
   isEnd?: boolean;
 }) {
@@ -125,7 +127,8 @@ export function DestinationMiniCard({
     <Link
       className={cn(
         "py-4 flex flex-col justify-start items-stretch",
-        !isEnd && "border-b"
+        !isEnd && "border-b",
+        item.slug === currentDestination.slug && "hidden"
       )}
       href={`/destinations/${item.slug}`}
     >

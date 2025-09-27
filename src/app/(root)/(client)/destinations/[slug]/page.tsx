@@ -9,7 +9,8 @@ import { DestinationRequests } from "@/utils/request/destination.request";
 import { DestinationRelation, NestedComment, Pagination } from "@/utils/types";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
-
+import { ViewRequests } from "@/utils/request/view.request";
+import { LikeServerRequests } from "@/utils/request/like.server.request";
 export default async function Page({
   params,
 }: {
@@ -30,6 +31,11 @@ export default async function Page({
   if (!destination) return notFound();
   if (destination && !destination.success) return notFound();
 
+  const isLiked = await LikeServerRequests.GET(
+    "destinations",
+    destination.result.id
+  );
+
   const comments: {
     success: boolean;
     result: { comments: NestedComment[] };
@@ -45,17 +51,9 @@ export default async function Page({
   );
 
   if (session) {
-    await fetch(`${process.env.BETTER_AUTH_URL}/api/view`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Cookie: (await headers()).get("cookie") ?? "",
-      },
-      body: JSON.stringify({
-        schema: "destinations",
-        schemaId: destination.result.id,
-      }),
+    await ViewRequests.POST({
+      schema: "destinations",
+      schemaId: destination.result.id,
     });
   }
 
@@ -65,7 +63,11 @@ export default async function Page({
         <div className="flex flex-col justify-start gap-8 items-stretch md:flex-row">
           <div className="md:w-2/3">
             <DestinationHero item={destination.result} />
-            <DestinationContent item={destination.result} />
+            <DestinationContent
+              session={session}
+              isLiked={isLiked.result}
+              item={destination.result}
+            />
             <Map url={destination.result.mapUrl} />
             <Comments
               schema="destinations"

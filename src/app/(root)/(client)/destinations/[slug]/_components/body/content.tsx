@@ -1,3 +1,5 @@
+"use client";
+import Like from "@/app/(root)/(client)/_components/like/like";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -5,6 +7,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import { Session } from "@/utils/auth";
 import { formatNumber } from "@/utils/helpers";
 import { DestinationRelation } from "@/utils/types";
 import { Tag } from "@prisma/client";
@@ -20,9 +24,13 @@ import {
 import Link from "next/link";
 
 export default function DestinationContent({
+  isLiked = false,
   item,
+  session,
 }: {
+  isLiked?: boolean;
   item: DestinationRelation;
+  session: Session | null;
 }) {
   return (
     <div className="w-full flex flex-col gap-8 justify-start items-stretch">
@@ -113,10 +121,13 @@ export default function DestinationContent({
         </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button size="sm">
-              <Heart />
-              {formatNumber(item._count.likes)}
-            </Button>
+            <Like
+              session={session}
+              schemaId={item.id}
+              schema="destinations"
+              currentLike={item._count.likes}
+              isLiked={isLiked}
+            />
           </TooltipTrigger>
           <TooltipContent>Likes</TooltipContent>
         </Tooltip>

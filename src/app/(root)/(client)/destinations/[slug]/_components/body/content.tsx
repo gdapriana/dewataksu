@@ -1,4 +1,5 @@
 "use client";
+import Bookmark from "@/app/(root)/(client)/_components/bookmark/bookmark";
 import Like from "@/app/(root)/(client)/_components/like/like";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,22 +13,16 @@ import { Session } from "@/utils/auth";
 import { formatNumber } from "@/utils/helpers";
 import { DestinationRelation } from "@/utils/types";
 import { Tag } from "@prisma/client";
-import {
-  Bookmark,
-  Eye,
-  Heart,
-  Layers,
-  Map,
-  MapPin,
-  Wallet,
-} from "lucide-react";
+import { Eye, Heart, Layers, Map, MapPin, Wallet } from "lucide-react";
 import Link from "next/link";
 
 export default function DestinationContent({
+  isBookmarked = false,
   isLiked = false,
   item,
   session,
 }: {
+  isBookmarked?: boolean;
   isLiked?: boolean;
   item: DestinationRelation;
   session: Session | null;
@@ -112,10 +107,13 @@ export default function DestinationContent({
         </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button size="sm">
-              <Bookmark />
-              {formatNumber(item._count.bookmarks)}
-            </Button>
+            <Bookmark
+              session={session}
+              schemaId={item.id}
+              schema="destinations"
+              currentBookmark={item._count.bookmarks}
+              isBookmarked={isBookmarked}
+            />
           </TooltipTrigger>
           <TooltipContent>Bookmarks</TooltipContent>
         </Tooltip>

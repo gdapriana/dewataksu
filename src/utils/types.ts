@@ -63,6 +63,7 @@ export type BaseComment = Prisma.CommentGetPayload<{
     author: {
       select: {
         id: true;
+        image: true;
         name: true;
         profileImage: {
           select: {

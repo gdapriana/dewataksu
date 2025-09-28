@@ -6,11 +6,19 @@ import DestinationHero from "@/app/(root)/(client)/destinations/[slug]/_componen
 import { auth, Session } from "@/utils/auth";
 import { CommentRequests } from "@/utils/request/comment.request";
 import { DestinationRequests } from "@/utils/request/destination.request";
-import { DestinationRelation, NestedComment, Pagination } from "@/utils/types";
+import {
+  CategoryRelation,
+  DestinationRelation,
+  NestedComment,
+  Pagination,
+} from "@/utils/types";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { ViewRequests } from "@/utils/request/view.request";
 import { LikeServerRequests } from "@/utils/request/like.server.request";
+import { BookmarkServerRequests } from "@/utils/request/bookmark.server.request";
+import { CategoryRequests } from "@/utils/request/category.request";
+import PopularCategories from "@/app/(root)/(client)/destinations/[slug]/_components/body/category";
 export default async function Page({
   params,
 }: {
@@ -36,6 +44,11 @@ export default async function Page({
     destination.result.id
   );
 
+  const isBookmarked = await BookmarkServerRequests.GET(
+    "destinations",
+    destination.result.id
+  );
+
   const comments: {
     success: boolean;
     result: { comments: NestedComment[] };
@@ -49,6 +62,12 @@ export default async function Page({
   } = await DestinationRequests.GETs(
     `search=${destination.result.category.name}&sortBy=liked&limit=4`
   );
+
+  const popularCategories: {
+    success: boolean;
+    result: { categories: CategoryRelation[]; pagination: Pagination };
+    message: string;
+  } = await CategoryRequests.GETs("sortBy=most_destinations&limit=10");
 
   if (session) {
     await ViewRequests.POST({
@@ -65,6 +84,7 @@ export default async function Page({
             <DestinationHero item={destination.result} />
             <DestinationContent
               session={session}
+              isBookmarked={isBookmarked.result}
               isLiked={isLiked.result}
               item={destination.result}
             />
@@ -76,11 +96,12 @@ export default async function Page({
               comments={comments.result.comments}
             />
           </div>
-          <div className="md:w-1/3">
+          <div className="md:w-1/3 flex flex-col justify-start items-stretch gap-8">
             <RelatedDestinations
               currentDestination={destination.result}
               items={relatedDestinations.result.destinations}
             />
+            <PopularCategories items={popularCategories.result.categories} />
           </div>
         </div>
       </div>

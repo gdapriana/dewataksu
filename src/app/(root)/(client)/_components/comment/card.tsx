@@ -55,7 +55,13 @@ export default function CommentCard({
             <AvatarFallback>
               <User className="w-3 h-3" />
             </AvatarFallback>
-            <AvatarImage src={comment.author.profileImage?.url || ""} />
+            <AvatarImage
+              alt={comment.author.name}
+              className="object-cover"
+              src={
+                comment.author.image || comment.author.profileImage?.url || ""
+              }
+            />
           </Avatar>
         </div>
         <div className="flex justify-start gap-2 items-center">
@@ -70,7 +76,7 @@ export default function CommentCard({
         <div className="">
           <p className="text-muted-foreground">{comment.body}</p>
         </div>
-        <div className="flex mt-4 gap-1 justify-end items-center">
+        <div className="flex mt-4 flex-wrap gap-1 justify-end items-center">
           {isReply && (
             <Badge variant="outline" className="line-clamp-1 me-auto">
               replying @{comment.parent?.author.name}

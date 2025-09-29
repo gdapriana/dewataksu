@@ -85,6 +85,7 @@ export default function NewComments({
           <Textarea
             disabled={isSubmitting}
             placeholder="Your comment..."
+            required
             onChange={(e) => setMsg(e.target.value)}
           ></Textarea>
           <DialogFooter>

@@ -1,4 +1,4 @@
-import TraditionCard from "@/app/(root)/(client)/_components/card/tradition";
+import { TraditionCard } from "@/app/(root)/(client)/_components/card/tradition";
 import SectionHeader from "@/app/(root)/(client)/_components/header/section-header";
 import { Badge } from "@/components/ui/badge";
 import {

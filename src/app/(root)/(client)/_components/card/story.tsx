@@ -6,14 +6,19 @@ import {
 import { StoryRelation } from "@/utils/types";
 import Image from "next/image";
 import moment from "moment";
-import { Bookmark, Calendar, Eye, Heart, User } from "lucide-react";
+import { Bookmark, Calendar, Eye, Heart, ImageOff, User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatNumber } from "@/utils/helpers";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
-export default function StoryCard({ item }: { item: StoryRelation }) {
+export function StoryCard({ item }: { item: StoryRelation }) {
   return (
-    <article className="aspect-[12/16] relative flex rounded-4xl overflow-hidden">
+    <Link
+      href={`/stories/${item.slug}`}
+      className="aspect-[12/16] relative flex rounded-4xl overflow-hidden"
+    >
       <div className="absolute z-[3] p-4 bottom-0 left-0 w-full flex justify-center items-center">
         <div className="bg-transparent p-2 w-full rounded-xl flex-col flex justify-start items-stretch">
           <Tooltip>
@@ -99,6 +104,55 @@ export default function StoryCard({ item }: { item: StoryRelation }) {
         height={1920}
         className="absolute z-[1] w-full h-full object-cover left-0 top-0"
       />
-    </article>
+    </Link>
+  );
+}
+
+export function StoryMiniCard({
+  currentStory,
+  item,
+  isEnd,
+}: {
+  currentStory: StoryRelation;
+  item: StoryRelation;
+  isEnd?: boolean;
+}) {
+  return (
+    <Link
+      className={cn(
+        "py-4 flex flex-col justify-start items-stretch",
+        !isEnd && "border-b",
+        item.slug === currentStory.slug && "hidden"
+      )}
+      href={`/stories/${item.slug}`}
+    >
+      <div className="flex gap-4 justify-center items-stretch">
+        <div className="w-[100px] bg-muted-foreground/10 rounded-lg overflow-hidden flex justify-center items-center">
+          {item.cover?.url ? (
+            <Image
+              width={1000}
+              height={1000}
+              alt={item.name}
+              src={item.cover.url}
+              quality={25}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <ImageOff className="w-4 h-4" />
+          )}
+        </div>
+        <div className="flex flex-1 flex-col justify-center items-start">
+          <h3 className="font-bold">{item.name}</h3>
+          <p className="line-clamp-2 text-sm text-muted-foreground">
+            by {item.author.name}
+          </p>
+        </div>
+      </div>
+      <div className="flex gap-1 mt-4 justify-end items-center flex-wrap">
+        <Badge variant="outline">
+          <Eye /> {formatNumber(item?._count.views)}
+        </Badge>
+      </div>
+    </Link>
   );
 }

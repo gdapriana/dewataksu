@@ -4,9 +4,16 @@ export class TraditionResponses {
   static readonly GET: Prisma.TraditionSelect = {
     id: true,
     name: true,
+    description: true,
     slug: true,
     address: true,
     _count: true,
+    district: {
+      select: {
+        name: true,
+        slug: true,
+      },
+    },
     comments: {
       select: {
         id: true,
@@ -38,6 +45,7 @@ export class TraditionResponses {
   static readonly GETs: Prisma.TraditionSelect = {
     id: true,
     name: true,
+    description: true,
     address: true,
     slug: true,
     _count: true,

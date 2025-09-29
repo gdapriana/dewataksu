@@ -3,6 +3,7 @@ model Tradition {
     name        String
     slug        String  @unique
     content     String
+    description String?
     address     String?
     districtId  String?
     coverId     String?

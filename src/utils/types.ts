@@ -44,7 +44,12 @@ export type StoryRelation = Prisma.StoryGetPayload<{
 export type TraditionRelation = Prisma.TraditionGetPayload<{
   include: {
     _count: true;
-    district: true;
+    district: {
+      select: {
+        name: true;
+        slug: true;
+      };
+    };
     bookmarks: true;
     comments: true;
     cover: true;

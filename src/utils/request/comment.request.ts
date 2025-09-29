@@ -1,3 +1,4 @@
+import { MainSchema } from "@/utils/types";
 import { CommentValidations } from "@/utils/validation/comment.validation";
 import z from "zod";
 
@@ -27,7 +28,7 @@ export class CommentRequests {
       console.log(e);
     }
   };
-  static GETs = async (schema: string, id: string) => {
+  static GETs = async (schema: MainSchema, id: string) => {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BETTER_AUTH_URL}/api/comments/${schema}/${id}`,

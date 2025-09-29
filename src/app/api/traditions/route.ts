@@ -73,6 +73,6 @@ export async function GET(req: NextRequest) {
     if (e instanceof ZodError) {
       return ErrorResponseMessage.ZOD_ERROR(e);
     }
-    return ErrorResponseMessage.INTERNAL_SERVER_ERROR();
   }
+  return ErrorResponseMessage.INTERNAL_SERVER_ERROR();
 }

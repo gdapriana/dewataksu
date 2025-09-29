@@ -17,7 +17,7 @@ import { District } from "@prisma/client";
 
 export function Navigation({ districts }: { districts: District[] }) {
   return (
-    <NavigationMenu className="hidden md:flex" viewport={false}>
+    <NavigationMenu className="hidden z-[99999] md:flex" viewport={false}>
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>

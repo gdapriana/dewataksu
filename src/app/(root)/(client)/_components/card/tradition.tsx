@@ -1,13 +1,22 @@
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 import { formatNumber } from "@/utils/helpers";
 import { TraditionRelation } from "@/utils/types";
 import { TooltipContent } from "@radix-ui/react-tooltip";
-import { Bookmark, Eye, Heart, Map, MapPin } from "lucide-react";
+import {
+  Bookmark,
+  Eye,
+  Heart,
+  ImageOff,
+  Layers,
+  Map,
+  MapPin,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function TraditionCard({ item }: { item: TraditionRelation }) {
+export function TraditionCard({ item }: { item: TraditionRelation }) {
   return (
     <Link
       href={`/traditions/${item.slug}`}
@@ -32,7 +41,7 @@ export default function TraditionCard({ item }: { item: TraditionRelation }) {
         </tbody>
       </table>
       <p className="text-sm line-clamp-2 group-hover:text-background">
-        {item.content}
+        {item.description}
       </p>
 
       <div className="flex mt-2 w-full justify-end items-center gap-1">
@@ -100,6 +109,55 @@ export default function TraditionCard({ item }: { item: TraditionRelation }) {
             alt={item.name}
           />
         )}
+      </div>
+    </Link>
+  );
+}
+
+export function TraditionMiniCard({
+  currentTradition,
+  item,
+  isEnd,
+}: {
+  currentTradition: TraditionRelation;
+  item: TraditionRelation;
+  isEnd?: boolean;
+}) {
+  return (
+    <Link
+      className={cn(
+        "py-4 flex flex-col justify-start items-stretch",
+        !isEnd && "border-b",
+        item.slug === currentTradition.slug && "hidden"
+      )}
+      href={`/traditions/${item.slug}`}
+    >
+      <div className="flex gap-4 justify-center items-stretch">
+        <div className="w-[100px] bg-muted-foreground/10 rounded-lg overflow-hidden flex justify-center items-center">
+          {item.cover?.url ? (
+            <Image
+              width={1000}
+              height={1000}
+              alt={item.name}
+              src={item.cover.url}
+              quality={25}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <ImageOff className="w-4 h-4" />
+          )}
+        </div>
+        <div className="flex flex-1 flex-col justify-center items-start">
+          <h3 className="font-bold">{item.name}</h3>
+          <p className="line-clamp-2 text-sm text-muted-foreground">
+            {item.content}
+          </p>
+        </div>
+      </div>
+      <div className="flex gap-1 mt-4 justify-end items-center flex-wrap">
+        <Badge variant="outline">
+          <Eye /> {formatNumber(item?._count.views)}
+        </Badge>
       </div>
     </Link>
   );

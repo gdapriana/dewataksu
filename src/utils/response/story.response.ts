@@ -2,6 +2,17 @@ import { Prisma } from "@prisma/client";
 
 export class StoryResponses {
   static readonly GET: Prisma.StoryInclude = {
+    author: {
+      select: {
+        name: true,
+        email: true,
+        profileImage: {
+          select: {
+            url: true,
+          },
+        },
+      },
+    },
     cover: {
       select: {
         id: true,

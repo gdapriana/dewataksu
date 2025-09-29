@@ -1,15 +1,6 @@
-import StoryCard from "@/app/(root)/(client)/_components/card/story";
+import { StoryCard } from "@/app/(root)/(client)/_components/card/story";
 import SectionHeader from "@/app/(root)/(client)/_components/header/section-header";
-import { Badge } from "@/components/ui/badge";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { StoryRelation, TraditionRelation } from "@/utils/types";
-import { Bookmark, Eye, Heart, Map, MapPin } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
+import { StoryRelation } from "@/utils/types";
 export default function PopularStories({
   stories,
 }: {

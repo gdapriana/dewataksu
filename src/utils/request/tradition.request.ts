@@ -14,7 +14,8 @@ export class TraditionRequests {
     const q = query ? `?${query}` : "";
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BETTER_AUTH_URL}/api/traditions${q}`
+        `${process.env.NEXT_PUBLIC_BETTER_AUTH_URL}/api/traditions${q}`,
+        { next: { revalidate: 60 } }
       );
       const data = await response.json();
       return data;

@@ -12,6 +12,7 @@ export class LikeServerRequests {
             "Content-Type": "application/json",
             Cookie: (await headers()).get("cookie") ?? "",
           },
+          next: { revalidate: 2 },
         }
       );
       const data = await response.json();

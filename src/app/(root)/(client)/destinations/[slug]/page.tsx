@@ -39,35 +39,21 @@ export default async function Page({
   if (!destination) return notFound();
   if (destination && !destination.success) return notFound();
 
-  const isLiked = await LikeServerRequests.GET(
-    "destinations",
-    destination.result.id
-  );
-
-  const isBookmarked = await BookmarkServerRequests.GET(
-    "destinations",
-    destination.result.id
-  );
-
-  const comments: {
-    success: boolean;
-    result: { comments: NestedComment[] };
-    message: string;
-  } = await CommentRequests.GETs("destinations", destination.result.id);
-
-  const relatedDestinations: {
-    success: boolean;
-    result: { destinations: DestinationRelation[]; pagination: Pagination };
-    message: string;
-  } = await DestinationRequests.GETs(
-    `search=${destination.result.category.name}&sortBy=liked&limit=4`
-  );
-
-  const popularCategories: {
-    success: boolean;
-    result: { categories: CategoryRelation[]; pagination: Pagination };
-    message: string;
-  } = await CategoryRequests.GETs("sortBy=most_destinations&limit=10");
+  const [
+    isBookmarked,
+    isLiked,
+    comments,
+    relatedDestinations,
+    popularCategories,
+  ] = await Promise.all([
+    LikeServerRequests.GET("destinations", destination.result.id),
+    BookmarkServerRequests.GET("destinations", destination.result.id),
+    CommentRequests.GETs("destinations", destination.result.id),
+    DestinationRequests.GETs(
+      `search=${destination.result.category.name}&sortBy=liked&limit=4`
+    ),
+    CategoryRequests.GETs("sortBy=most_destinations&limit=10"),
+  ]);
 
   if (session) {
     await ViewRequests.POST({

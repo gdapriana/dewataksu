@@ -95,16 +95,24 @@ export function StoryCard({ item }: { item: StoryRelation }) {
         </div>
       </div>
       <div className="absolute z-[2] left-0 top-0 w-full h-full card-gradient"></div>
-      <Image
-        src={
-          item?.cover?.url ||
-          "https://images.unsplash.com/photo-1750564042970-27123995da1b?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        }
-        alt={item.name}
-        width={1080}
-        height={1920}
-        className="absolute z-[1] w-full h-full object-cover left-0 top-0"
-      />
+      {item?.cover?.url ? (
+        <Image
+          src={item?.cover?.url}
+          alt={item.name}
+          width={400}
+          height={800}
+          loading="lazy"
+          quality={25}
+          className="absolute z-[1] w-full h-full object-cover left-0 top-0"
+        />
+      ) : (
+        <EmptyImage
+          className={{
+            wrapper: "bg-neutral-900",
+            icon: "w-8 h-8 text-muted-foreground/20 mb-20",
+          }}
+        />
+      )}
     </Link>
   );
 }

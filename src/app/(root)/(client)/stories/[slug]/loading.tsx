@@ -1,5 +1,5 @@
-import StorySkeleton from "@/app/(root)/(client)/stories/[slug]/_components/skeleton/skeleton";
+import SinglePageSkeleton from "@/components/skeleton/singlepage";
 
 export default function Loading() {
-  return <StorySkeleton />;
+  return <SinglePageSkeleton />;
 }

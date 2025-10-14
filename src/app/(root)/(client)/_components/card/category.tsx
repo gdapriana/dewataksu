@@ -1,3 +1,4 @@
+import EmptyImage from "@/app/(root)/(client)/_components/empty/image";
 import { Badge } from "@/components/ui/badge";
 import { CategoryRelation } from "@/utils/types";
 import { ArrowUpRight, Palmtree } from "lucide-react";
@@ -25,7 +26,7 @@ export default function CategoryCard({ item }: { item: CategoryRelation }) {
           <div className="flex justify-end mt-3 items-center">
             <Link
               className="bg-white p-4 rounded-full hover:bg-neutral-900 group"
-              href={`/categories/${item.slug}`}
+              href={`/destinations?category=${item.slug}`}
             >
               <ArrowUpRight className="text-neutral-900 transition-all group-hover:text-white group-hover:rotate-45" />
             </Link>
@@ -36,17 +37,17 @@ export default function CategoryCard({ item }: { item: CategoryRelation }) {
         <Image
           alt={item.name}
           src={item.cover.url}
-          width={1000}
-          height={1000}
+          width={800}
+          loading="lazy"
+          height={400}
           className="absolute object-cover z-[1] left-0 top-0 w-full h-full"
         />
       ) : (
-        <Image
-          alt={item.name}
-          src="https://images.unsplash.com/photo-1757502399162-2ce03568bd0e?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          width={1000}
-          height={1000}
-          className="absolute object-cover z-[1] left-0 top-0 w-full h-full"
+        <EmptyImage
+          className={{
+            wrapper: "bg-neutral-900",
+            icon: "w-8 h-8 text-muted-foreground/20 mb-20",
+          }}
         />
       )}
     </article>

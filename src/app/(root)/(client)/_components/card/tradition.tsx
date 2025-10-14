@@ -96,19 +96,15 @@ export function TraditionCard({ item }: { item: TraditionRelation }) {
         {item.cover?.url ? (
           <Image
             src={item.cover.url}
-            width={1920}
-            height={1080}
+            width={800}
+            height={400}
+            loading="lazy"
+            quality={25}
             alt={item.name}
             className="w-full h-full object-cover"
           />
         ) : (
-          <Image
-            src="https://images.unsplash.com/photo-1517322048670-4fba75cbbb62?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            width={1920}
-            height={1080}
-            className="w-full h-full object-cover"
-            alt={item.name}
-          />
+          <EmptyImage />
         )}
       </div>
     </Link>

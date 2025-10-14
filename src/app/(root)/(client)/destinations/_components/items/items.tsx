@@ -19,6 +19,7 @@ import {
 } from "@/utils/types";
 import { Palmtree } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
 export default function DestinationItems({
   categories,
@@ -41,15 +42,60 @@ export default function DestinationItems({
   >();
   const [orderBy, setOrderBy] = useState<"asc" | "desc">();
 
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const category = searchParams.get("category");
+    const district = searchParams.get("district");
+    const searchQuery = searchParams.get("search");
+    const sort = searchParams.get("sortBy") as
+      | "price"
+      | "liked"
+      | "viewed"
+      | "bookmarked"
+      | null;
+    const order = searchParams.get("orderBy") as "asc" | "desc" | null;
+
+    if (category) setCategorySlug(category);
+    if (district) setDistrictSlug(district);
+    if (searchQuery) setSearch(searchQuery);
+    if (sort) setSortBy(sort);
+    if (order) setOrderBy(order);
+  }, [searchParams]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (categorySlug) params.set("category", categorySlug);
+    else params.delete("category");
+
+    if (districtSlug) params.set("district", districtSlug);
+    else params.delete("district");
+
+    if (search) params.set("search", search);
+    else params.delete("search");
+
+    if (sortBy) params.set("sortBy", sortBy);
+    else params.delete("sortBy");
+
+    if (orderBy) params.set("orderBy", orderBy);
+    else params.delete("orderBy");
+
+    router.replace(`${pathname}?${params.toString()}`);
+  }, [categorySlug, districtSlug, search, sortBy, orderBy]);
+
   useEffect(() => {
     const controller = new AbortController();
     async function fetchDestinations() {
       setLoading(true);
       try {
         const params = new URLSearchParams();
-        if (districtSlug) params.set("district", districtSlug);
+        if (districtSlug && districtSlug !== "all")
+          params.set("district", districtSlug);
         if (limit) params.set("limit", limit.toString());
-        if (categorySlug) params.set("category", categorySlug);
+        if (categorySlug && categorySlug !== "all")
+          params.set("category", categorySlug);
         if (search) params.set("search", search);
         if (sortBy) params.set("sortBy", sortBy);
         if (orderBy) params.set("orderBy", orderBy);
@@ -58,18 +104,14 @@ export default function DestinationItems({
           `${
             process.env.NEXT_PUBLIC_BETTER_AUTH_URL
           }/api/destinations?${params.toString()}`,
-          {
-            signal: controller.signal,
-          }
+          { signal: controller.signal }
         );
         if (!res.ok) throw new Error("Failed to fetch");
         const data = await res.json();
         setDestinations(data.result.destinations);
         setPagination(data.result.pagination);
       } catch (err) {
-        if ((err as Error).name !== "AbortError") {
-          console.error(err);
-        }
+        if ((err as Error).name !== "AbortError") console.error(err);
       } finally {
         setLoading(false);
       }
@@ -87,43 +129,45 @@ export default function DestinationItems({
             <div className="flex gap-2 flex-wrap justify-end items-center">
               <Input
                 placeholder="Search destinations..."
-                value={search}
+                value={search || ""}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-[200px]"
               />
 
               <Select
                 value={districtSlug}
-                onValueChange={(val: string) => {
-                  setDistrictSlug(val);
-                }}
+                onValueChange={(val: string) => setDistrictSlug(val)}
               >
                 <SelectTrigger className="w-[150px]">
                   <SelectValue placeholder="Districts" />
                 </SelectTrigger>
                 <SelectContent>
                   {districts.map((item: DistrictRelation) => (
-                    <SelectItem value={item.slug}>{item.name}</SelectItem>
+                    <SelectItem key={item.id} value={item.slug}>
+                      {item.name}
+                    </SelectItem>
                   ))}
+                  <SelectItem value="all">All</SelectItem>
                 </SelectContent>
               </Select>
 
               <Select
                 value={categorySlug}
-                onValueChange={(val: string) => {
-                  setCategorySlug(val);
-                }}
+                onValueChange={(val: string) => setCategorySlug(val)}
               >
                 <SelectTrigger className="w-[150px]">
                   <SelectValue placeholder="Categories" />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((item: CategoryRelation) => (
-                    <SelectItem value={item.slug}>{item.name}</SelectItem>
+                    <SelectItem key={item.id} value={item.slug}>
+                      {item.name}
+                    </SelectItem>
                   ))}
+                  <SelectItem value="all">All</SelectItem>
                 </SelectContent>
               </Select>
-              {/* sort by select (shadCn) */}
+
               <Select
                 value={sortBy}
                 onValueChange={(
@@ -140,7 +184,7 @@ export default function DestinationItems({
                   <SelectItem value="bookmarked">Bookmarked</SelectItem>
                 </SelectContent>
               </Select>
-              {/* order by select (shadCn) */}
+
               <Select
                 value={orderBy}
                 onValueChange={(val: "asc" | "desc") => setOrderBy(val)}
@@ -155,10 +199,13 @@ export default function DestinationItems({
               </Select>
             </div>
           </div>
+
           {loading && <div>Loading...</div>}
+
           {!loading && destinations.length === 0 && (
             <Empty className="h-[400px]" Icon={Palmtree} item="Destinations" />
           )}
+
           <div className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {destinations.map((item: DestinationRelation) => (
               <DestinationCard item={item} key={item.id} />

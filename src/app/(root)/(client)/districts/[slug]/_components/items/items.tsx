@@ -59,6 +59,7 @@ export default function Items({
           }/api/destinations?${params.toString()}`,
           {
             signal: controller.signal,
+            next: { revalidate: 60 },
           }
         );
         if (!res.ok) throw new Error("Failed to fetch");

@@ -9,15 +9,7 @@ import {
 import { cn } from "@/lib/utils";
 import { formatNumber } from "@/utils/helpers";
 import { DestinationRelation } from "@/utils/types";
-import {
-  Bookmark,
-  Eye,
-  Heart,
-  ImageOff,
-  Layers,
-  Map,
-  MapPin,
-} from "lucide-react";
+import { Bookmark, Eye, Heart, Layers, Map, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -59,9 +51,10 @@ export function DestinationCard({ item }: { item: DestinationRelation }) {
         ) : (
           <Image
             priority={false}
-            width={1280}
+            width={800}
             loading="lazy"
-            height={720}
+            quality={25}
+            height={350}
             className="w-full aspect-video rounded-xl z-[1] h-full object-cover"
             src={item.cover.url}
             alt={item.name}
@@ -137,8 +130,9 @@ export function DestinationMiniCard({
         <div className="w-[100px] rounded-lg overflow-hidden flex justify-center items-center">
           {item.cover?.url ? (
             <Image
-              width={1000}
-              height={1000}
+              width={300}
+              loading="lazy"
+              height={169}
               alt={item.name}
               src={item.cover.url}
               quality={25}

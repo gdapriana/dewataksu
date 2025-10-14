@@ -1,8 +1,6 @@
-"use client";
-
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function DestinationSkeleton() {
+export default function SinglePageSkeleton() {
   return (
     <div className="container mx-auto p-4 grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2 space-y-6">

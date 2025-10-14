@@ -7,38 +7,19 @@ import { CategoryRequests } from "@/utils/request/category.request";
 import { DestinationRequests } from "@/utils/request/destination.request";
 import { StoryRequests } from "@/utils/request/story.request";
 import { TraditionRequests } from "@/utils/request/tradition.request";
-import {
-  CategoryRelation,
-  DestinationRelation,
-  Pagination,
-  StoryRelation,
-  TraditionRelation,
-} from "@/utils/types";
 
 export default async function Home() {
-  const popularDestinations: {
-    success: boolean;
-    result: { destinations: DestinationRelation[]; pagination: Pagination };
-    message: string;
-  } = await DestinationRequests.GETs("sortBy=liked&limit=4");
-
-  const popularCategories: {
-    success: boolean;
-    result: { categories: CategoryRelation[]; pagination: Pagination };
-    message: string;
-  } = await CategoryRequests.GETs("sortBy=most_destinations&limit=3");
-
-  const popularTraditions: {
-    success: boolean;
-    result: { traditions: TraditionRelation[]; pagination: Pagination };
-    message: string;
-  } = await TraditionRequests.GETs("sortBy=liked&limit=4");
-
-  const popularStories: {
-    success: boolean;
-    result: { stories: StoryRelation[]; pagination: Pagination };
-    message: string;
-  } = await StoryRequests.GETs("sortBy=liked&limit=4");
+  const [
+    popularDestinations,
+    popularCategories,
+    popularTraditions,
+    popularStories,
+  ] = await Promise.all([
+    DestinationRequests.GETs("sortBy=liked&limit=4"),
+    CategoryRequests.GETs("sortBy=most_destinations&limit=3"),
+    TraditionRequests.GETs("sortBy=liked&limit=4"),
+    StoryRequests.GETs("sortBy=liked&limit=4"),
+  ]);
 
   return (
     <main>

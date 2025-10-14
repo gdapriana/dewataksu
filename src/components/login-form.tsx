@@ -1,20 +1,64 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+"use client";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { signIn } from "@/utils/auth-client";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [onFormSubmit, setOnFormSubmit] = useState<boolean>(false);
+  const router = useRouter();
+
+  const onSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setOnFormSubmit(true);
+    toast.promise(
+      (async () => {
+        const res = await signIn.email({
+          email,
+          password,
+        });
+
+        if (res.error) {
+          throw new Error(res.error.message || "invalid credentials");
+        }
+
+        return res;
+      })(),
+      {
+        loading: " Signin...",
+        success: () => {
+          router.push("/");
+          return "Success!. Welcome 👋";
+        },
+        error: (err) => err.message,
+        finally: () => {
+          setOnFormSubmit(false);
+        },
+      }
+    );
+  };
+
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props}>
+    <form
+      onSubmit={onSubmit}
+      className={cn("flex flex-col gap-6", className)}
+      {...props}
+    >
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
           <h1 className="text-2xl font-bold">Login to your account</h1>
@@ -61,5 +105,5 @@ export function LoginForm({
         </Field>
       </FieldGroup>
     </form>
-  )
+  );
 }

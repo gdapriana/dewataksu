@@ -31,7 +31,8 @@ export class CommentRequests {
   static GETs = async (schema: MainSchema, id: string) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BETTER_AUTH_URL}/api/comments/${schema}/${id}`
+        `${process.env.NEXT_PUBLIC_BETTER_AUTH_URL}/api/comments/${schema}/${id}`,
+        { next: { revalidate: 5 } }
       );
       const data = await response.json();
       return data;

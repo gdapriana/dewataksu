@@ -1,10 +1,6 @@
 import CategoryCard from "@/app/(root)/(client)/_components/card/category";
 import SectionHeader from "@/app/(root)/(client)/_components/header/section-header";
-import { Badge } from "@/components/ui/badge";
 import { CategoryRelation } from "@/utils/types";
-import { ArrowUpRight, Palmtree } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
 export default function PopularCategories({
   categories,
 }: {

@@ -29,19 +29,12 @@ export default async function Page({
   if (!district) return notFound();
   if (district && !district.success) return notFound();
 
-  const popularDestinations: {
-    success: boolean;
-    result: { destinations: DestinationRelation[]; pagination: Pagination };
-    message: string;
-  } = await DestinationRequests.GETs(
-    `district=${district.result.slug}&sortBy=viewed&limit=4`
-  );
-
-  const categories: {
-    success: boolean;
-    result: { categories: CategoryRelation[]; pagination: Pagination };
-    message: string;
-  } = await CategoryRequests.GETs("sortBy=most_destinations");
+  const [popularDestinations, categories] = await Promise.all([
+    DestinationRequests.GETs(
+      `district=${district.result.slug}&sortBy=viewed&limit=4`
+    ),
+    CategoryRequests.GETs("sortBy=most_destinations"),
+  ]);
 
   return (
     <div className="w-full py-8 flex justify-center items-center flex-col">

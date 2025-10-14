@@ -16,8 +16,9 @@ export default function DestinationHero({
   return (
     <div className="relative flex w-full md:aspect-[16/9] mb-4 rounded-4xl overflow-hidden aspect-square">
       <Image
-        width={1000}
-        height={1000}
+        width={1920}
+        height={1080}
+        priority
         className="absolute w-full h-full object-cover left-0 top-0 z-[1]"
         alt={item.name}
         src={item.cover?.url}

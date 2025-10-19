@@ -6,11 +6,14 @@ import {
   Command,
   Frame,
   GalleryVerticalEnd,
+  Layers3,
   Map,
+  MapIcon,
   Palmtree,
   PieChart,
   Rainbow,
   Settings2,
+  Users,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -69,7 +72,7 @@ const data = {
       title: "Traditions",
       url: "#",
       icon: Rainbow,
-      isActive: true,
+      isActive: false,
       items: [
         {
           title: "New Tradition",
@@ -85,7 +88,7 @@ const data = {
       title: "Stories",
       url: "#",
       icon: BookA,
-      isActive: true,
+      isActive: false,
       items: [
         {
           title: "New Story",
@@ -98,25 +101,46 @@ const data = {
       ],
     },
     {
-      title: "Settings",
+      title: "District",
       url: "#",
-      icon: Settings2,
+      icon: MapIcon,
+      isActive: false,
       items: [
         {
-          title: "General",
-          url: "#",
+          title: "New District",
+          url: "/admin/districts/create",
         },
         {
-          title: "Team",
-          url: "#",
+          title: "All Districts",
+          url: "/admin/districts",
+        },
+      ],
+    },
+    {
+      title: "Categories",
+      url: "#",
+      icon: Layers3,
+      isActive: false,
+      items: [
+        {
+          title: "New Category",
+          url: "/admin/categories/create",
         },
         {
-          title: "Billing",
-          url: "#",
+          title: "All Categories",
+          url: "/admin/categories",
         },
+      ],
+    },
+    {
+      title: "Users",
+      url: "#",
+      icon: Users,
+      isActive: false,
+      items: [
         {
-          title: "Limits",
-          url: "#",
+          title: "All Users",
+          url: "/admin/users",
         },
       ],
     },

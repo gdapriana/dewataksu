@@ -1,3 +1,4 @@
+import { UserResponses } from "@/utils/response/user.response";
 import { Prisma } from "@prisma/client";
 
 export type MainSchema = "destinations" | "traditions" | "stories";
@@ -47,6 +48,214 @@ export type StoryRelation = Prisma.StoryGetPayload<{
     cover: true;
     likes: true;
     views: true;
+  };
+}>;
+
+export type UserRelation = Prisma.UserGetPayload<{
+  select: {
+    _count: true;
+    likes: {
+      select: {
+        destination: {
+          select: {
+            cover: {
+              select: {
+                url: true;
+              };
+            };
+            name: true;
+            content: true;
+            category: {
+              select: {
+                name: true;
+                slug: true;
+              };
+            };
+            address: true;
+            _count: true;
+            slug: true;
+            district: {
+              select: {
+                name: true;
+                slug: true;
+              };
+            };
+            price: true;
+            tags: {
+              select: {
+                name: true;
+              };
+            };
+          };
+        };
+        tradition: {
+          select: {
+            slug: true;
+            name: true;
+            cover: {
+              select: {
+                url: true;
+              };
+            };
+            district: {
+              select: {
+                name: true;
+                slug: true;
+              };
+            };
+            _count: true;
+            address: true;
+            description: true;
+          };
+        };
+        story: {
+          select: {
+            name: true;
+            slug: true;
+            cover: {
+              select: {
+                url: true;
+              };
+            };
+            _count: true;
+            author: {
+              select: {
+                name: true;
+                email: true;
+                image: true;
+                profileImage: {
+                  select: {
+                    url: true;
+                  };
+                };
+              };
+            };
+          };
+        };
+      };
+    };
+    bookmarks: {
+      select: {
+        destination: {
+          select: {
+            cover: {
+              select: {
+                url: true;
+              };
+            };
+            name: true;
+            content: true;
+            category: {
+              select: {
+                name: true;
+                slug: true;
+              };
+            };
+            address: true;
+            _count: true;
+            slug: true;
+            district: {
+              select: {
+                name: true;
+                slug: true;
+              };
+            };
+            price: true;
+            tags: {
+              select: {
+                name: true;
+              };
+            };
+          };
+        };
+        tradition: {
+          select: {
+            slug: true;
+            name: true;
+            cover: {
+              select: {
+                url: true;
+              };
+            };
+            district: {
+              select: {
+                name: true;
+                slug: true;
+              };
+            };
+            _count: true;
+            address: true;
+            description: true;
+          };
+        };
+        story: {
+          select: {
+            name: true;
+            slug: true;
+            cover: {
+              select: {
+                url: true;
+              };
+            };
+            _count: true;
+            author: {
+              select: {
+                name: true;
+                email: true;
+                image: true;
+                profileImage: {
+                  select: {
+                    url: true;
+                  };
+                };
+              };
+            };
+          };
+        };
+      };
+    };
+    image: true;
+    profileImage: {
+      select: {
+        url: true;
+      };
+    };
+    email: true;
+    id: true;
+    stories: {
+      select: {
+        name: true;
+        slug: true;
+        cover: {
+          select: {
+            url: true;
+          };
+        };
+        _count: true;
+        author: {
+          select: {
+            name: true;
+            email: true;
+            image: true;
+            profileImage: {
+              select: {
+                url: true;
+              };
+            };
+          };
+        };
+      };
+    };
+    name: true;
+    activityLogs: {
+      select: {
+        action: true;
+        createdAt: true;
+        id: true;
+        schema: true;
+        schemaId: true;
+      };
+    };
   };
 }>;
 

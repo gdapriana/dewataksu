@@ -33,24 +33,12 @@ export default async function Page({
   if (!story) return notFound();
   if (story && !story.success) return notFound();
 
-  const isLiked = await LikeServerRequests.GET("stories", story.result.id);
-
-  const isBookmarked = await BookmarkServerRequests.GET(
-    "stories",
-    story.result.id
-  );
-
-  const comments: {
-    success: boolean;
-    result: { comments: NestedComment[] };
-    message: string;
-  } = await CommentRequests.GETs("stories", story.result.id);
-
-  const popularStories: {
-    success: boolean;
-    result: { stories: StoryRelation[]; pagination: Pagination };
-    message: string;
-  } = await StoryRequests.GETs(`sortBy=liked&limit=5`);
+  const [isLiked, isBookmarked, comments, popularStories] = await Promise.all([
+    LikeServerRequests.GET("stories", story.result.id),
+    BookmarkServerRequests.GET("stories", story.result.id),
+    CommentRequests.GETs("stories", story.result.id),
+    StoryRequests.GETs(`sortBy=liked&limit=5`),
+  ]);
 
   if (session) {
     await ViewRequests.POST({

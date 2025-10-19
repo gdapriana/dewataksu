@@ -46,8 +46,8 @@ export default async function Page({
     relatedDestinations,
     popularCategories,
   ] = await Promise.all([
-    LikeServerRequests.GET("destinations", destination.result.id),
     BookmarkServerRequests.GET("destinations", destination.result.id),
+    LikeServerRequests.GET("destinations", destination.result.id),
     CommentRequests.GETs("destinations", destination.result.id),
     DestinationRequests.GETs(
       `search=${destination.result.category.name}&sortBy=liked&limit=4`
@@ -61,6 +61,9 @@ export default async function Page({
       schemaId: destination.result.id,
     });
   }
+
+  console.log({ isBookmarked });
+  console.log({ isLiked });
 
   return (
     <div className="w-full flex justify-center items-center">

@@ -1,11 +1,15 @@
 import prisma from "@/lib/db";
 import { apiSuccessResponse, ErrorResponseMessage } from "@/utils/api-response";
+import { auth } from "@/utils/auth";
 import { StoryResponses } from "@/utils/response/story.response";
 import { StoryValidations } from "@/utils/validation/story.validation";
 import { validateRequest } from "@/utils/validation/validate";
 import { Prisma, Schema } from "@prisma/client";
+import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { ZodError } from "zod";
+import z, { ZodError } from "zod";
+import slugify from "slugify";
+import { slugifySetting } from "@/utils/helpers";
 
 const response = StoryResponses;
 const table = prisma.story;
@@ -69,6 +73,56 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       ...apiSuccessResponse("GETS", schema),
       result: { stories, pagination },
+    });
+  } catch (e) {
+    if (e instanceof ZodError) {
+      return ErrorResponseMessage.ZOD_ERROR(e);
+    }
+    return ErrorResponseMessage.INTERNAL_SERVER_ERROR();
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session) return ErrorResponseMessage.FORBIDDEN();
+    const data: z.infer<typeof validation.POST> = await req.json();
+    const validatedBody = validateRequest(validation.POST, data);
+    const unique = Date.now() + Math.random();
+    const slug = `${slugify(validatedBody.name, slugifySetting)}-${unique}`;
+    const checkItem = await table.findUnique({
+      where: {
+        slug,
+      },
+      select: { id: true },
+    });
+    if (checkItem) return ErrorResponseMessage.ALREADY_EXISTS("story");
+
+    if (validatedBody.coverId) {
+      const checkImage = await prisma.image.findUnique({
+        where: { id: validatedBody.coverId },
+      });
+      if (!checkImage) return ErrorResponseMessage.NOT_FOUND("image");
+    }
+
+    const item = await table.create({
+      data: {
+        name: validatedBody.name,
+        content: validatedBody.content,
+        userId: session.user.id,
+        coverId: validatedBody.coverId,
+        slug,
+      },
+      select: {
+        id: true,
+      },
+    });
+    return NextResponse.json({
+      ...apiSuccessResponse("CREATE", "STORY"),
+      result: item,
     });
   } catch (e) {
     if (e instanceof ZodError) {

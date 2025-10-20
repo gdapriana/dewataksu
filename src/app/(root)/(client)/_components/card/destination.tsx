@@ -18,7 +18,7 @@ export function DestinationCard({ item }: { item: DestinationRelation }) {
     <Link
       href={`/destinations/${item.slug}`}
       key={item.id}
-      className="flex rounded-xl gap-4 overflow-hidden flex-col justify-start items-stretch"
+      className="flex gap-4 overflow-hidden flex-col justify-start items-stretch"
     >
       <div className="aspect-video flex relative">
         <div className="absolute z-[2] bottom-0 right-0 m-2 flex justify-center items-center gap-1">

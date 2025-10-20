@@ -2,6 +2,13 @@ import { NestedComment } from "@/utils/types";
 import { Easing } from "motion/react";
 
 export const globalEase: Easing = [0.23, 1, 0.32, 1];
+export const slugifySetting = {
+  lower: true,
+  strict: true,
+  trim: true,
+  replacement: "-",
+  locale: "en",
+};
 export function formatNumber(
   value: number | null | undefined,
   digits = 1

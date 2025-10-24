@@ -1,10 +1,12 @@
 import prisma from "@/lib/db";
 import { apiSuccessResponse, ErrorResponseMessage } from "@/utils/api-response";
+import { slugifySetting } from "@/utils/helpers";
 import { StoryResponses } from "@/utils/response/story.response";
 import { StoryValidations } from "@/utils/validation/story.validation";
 import { validateRequest } from "@/utils/validation/validate";
 import { NextRequest, NextResponse } from "next/server";
-import { ZodError } from "zod";
+import slugify from "slugify";
+import z, { ZodError } from "zod";
 
 const table = prisma.story;
 const validation = StoryValidations;
@@ -30,6 +32,5 @@ export async function GET(
   } catch (e) {
     if (e instanceof ZodError) return ErrorResponseMessage.ZOD_ERROR(e);
   }
-
   return ErrorResponseMessage.INTERNAL_SERVER_ERROR();
 }

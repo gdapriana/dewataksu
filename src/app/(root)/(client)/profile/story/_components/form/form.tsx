@@ -19,6 +19,17 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import TiptapEditor from "@/app/(root)/_components/tiptap/editor";
 import { Button } from "@/components/ui/button";
+import Dropzone from "@/app/(root)/(client)/profile/story/_components/form/dropzone";
+import Image from "next/image";
+import { Label } from "@/components/ui/label";
+import { Trash } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { ImageRequests } from "@/utils/request/image.request";
+import { StoryRequests } from "@/utils/request/story.request";
 
 const formSchema = StoryValidations.POST;
 
@@ -30,6 +41,8 @@ export default function StoryForm({
   currentStory?: StoryRelation;
 }) {
   const [loading, setLoading] = useState<boolean>(false);
+  const [coverPreview, setCoverPreview] = useState<string | null>();
+  const [selectedFile, setSelectedFile] = useState<File>();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -49,17 +62,50 @@ export default function StoryForm({
         isPublished: currentStory.isPublished,
         coverId: currentStory.coverId || undefined,
       });
+      setCoverPreview(currentStory.cover?.url);
     }
   }, [currentStory, form]);
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log({ values });
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (!selectedFile) return;
+    setSelectedFile(selectedFile);
+    setCoverPreview(URL.createObjectURL(selectedFile));
+  };
+
+  const handleDeleteFile = () => {
+    setCoverPreview(null);
+    setSelectedFile(undefined);
+  };
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (mode === "post") {
+      if (selectedFile) {
+        const cover = await ImageRequests.POST(selectedFile);
+        await StoryRequests.POST({ ...values, coverId: cover.result.id });
+      } else {
+        await StoryRequests.POST({ ...values, coverId: undefined });
+      }
+    } else {
+      if (selectedFile) {
+        const cover = await ImageRequests.POST(selectedFile);
+        await StoryRequests.PATCH(currentStory?.id, {
+          ...values,
+          coverId: cover.result.id,
+        });
+      } else {
+        await StoryRequests.PATCH(currentStory?.id, {
+          ...values,
+          coverId: coverPreview === null ? null : undefined,
+        });
+      }
+    }
   }
 
   return (
     <Form {...form}>
       <form
-        className="grid grid-cols-1 gap-8 md:grid-cols-2"
+        className="grid grid-cols-1 gap-8 md:grid-cols-[1fr_1.4fr]"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <div className="flex flex-col gap-8 justify-start items-stretch">
@@ -106,6 +152,43 @@ export default function StoryForm({
               </FormItem>
             )}
           />
+
+          {coverPreview && (
+            <div className="relative flex justify-center items-center">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={handleDeleteFile}
+                    variant="destructive"
+                    className="absolute right-4 bottom-4 cursor-pointer"
+                  >
+                    <Trash />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Delete cover</TooltipContent>
+              </Tooltip>
+              <Image
+                src={coverPreview}
+                alt="cover"
+                width={800}
+                height={400}
+                priority
+                className="w-full aspect-video object-cover rounded-2xl max-w-3xl"
+              />
+            </div>
+          )}
+
+          {!coverPreview && (
+            <div className="grid w-full items-center gap-3">
+              <Label htmlFor="picture">Picture</Label>
+              <Input
+                accept="image/*"
+                id="picture"
+                type="file"
+                onChange={handleFileChange}
+              />
+            </div>
+          )}
         </div>
 
         <div className="md:row-span-2 order-last md:order-none">

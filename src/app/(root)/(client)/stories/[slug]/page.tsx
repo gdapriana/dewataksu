@@ -28,7 +28,7 @@ export default async function Page({
     success: boolean;
     result: StoryRelation;
     message: string;
-  } = await StoryRequests.GET(slug);
+  } = await StoryRequests.GETSlug(slug);
 
   if (!story) return notFound();
   if (story && !story.success) return notFound();

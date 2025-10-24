@@ -7,10 +7,10 @@ import { notFound } from "next/navigation";
 export default async function Page({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ id: string }>;
 }) {
-  const { slug } = await params;
-  const [story] = await Promise.all([StoryRequests.GET(slug)]);
+  const { id } = await params;
+  const [story] = await Promise.all([StoryRequests.GET(id)]);
 
   const session: Session | null = await auth.api.getSession({
     headers: await headers(),

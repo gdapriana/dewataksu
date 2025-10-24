@@ -1,8 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/utils/auth";
-import { headers } from "next/headers";
-import { ErrorResponseMessage } from "@/utils/api-response";
 import prisma from "@/lib/db";
 
 cloudinary.config({
@@ -13,10 +10,6 @@ cloudinary.config({
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
-    if (!session) return ErrorResponseMessage.FORBIDDEN();
     const formData = await req.formData();
     const file = formData.get("file") as File;
 
@@ -32,7 +25,7 @@ export async function POST(req: NextRequest) {
       public_id: string;
     }>((resolve, reject) => {
       cloudinary.uploader
-        .upload_stream({ folder: "uploads" }, (error, result) => {
+        .upload_stream({ folder: "dewataksu" }, (error, result) => {
           if (error || !result) reject(error);
           else
             resolve({
@@ -50,6 +43,7 @@ export async function POST(req: NextRequest) {
       },
       select: {
         id: true,
+        publicId: true,
       },
     });
 

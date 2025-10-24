@@ -10,7 +10,7 @@ export default async function Page({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [story] = await Promise.all([StoryRequests.GET(id)]);
+  const [story] = await Promise.all([StoryRequests.GETId(id)]);
 
   const session: Session | null = await auth.api.getSession({
     headers: await headers(),

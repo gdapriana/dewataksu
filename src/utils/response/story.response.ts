@@ -4,6 +4,7 @@ export class StoryResponses {
   static readonly GET: Prisma.StoryInclude = {
     author: {
       select: {
+        id: true,
         name: true,
         email: true,
         profileImage: {

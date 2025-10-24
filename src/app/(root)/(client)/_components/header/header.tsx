@@ -21,13 +21,9 @@ export default function Header({ districts }: { districts: District[] }) {
         <div className="absolute h-full px-4 gap-2 flex justify-center items-center z-10 right-0 top-[50%] bottom-[50%] translate-y-[-50%]">
           <AuthArea />
           {theme === "light" ? (
-            <Button size="icon" onClick={() => setTheme("dark")}>
-              <Moon />
-            </Button>
+            <Button size="icon" onClick={() => setTheme("dark")}></Button>
           ) : (
-            <Button size="icon" onClick={() => setTheme("light")}>
-              <Sun />
-            </Button>
+            <Button size="icon" onClick={() => setTheme("light")}></Button>
           )}
         </div>
       </div>

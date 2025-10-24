@@ -33,6 +33,7 @@ export type StoryRelation = Prisma.StoryGetPayload<{
     _count: true;
     author: {
       select: {
+        id: true;
         name: true;
         email: true;
         image: true;

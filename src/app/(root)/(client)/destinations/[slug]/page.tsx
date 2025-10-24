@@ -6,12 +6,7 @@ import DestinationHero from "@/app/(root)/(client)/destinations/[slug]/_componen
 import { auth, Session } from "@/utils/auth";
 import { CommentRequests } from "@/utils/request/comment.request";
 import { DestinationRequests } from "@/utils/request/destination.request";
-import {
-  CategoryRelation,
-  DestinationRelation,
-  NestedComment,
-  Pagination,
-} from "@/utils/types";
+import { DestinationRelation } from "@/utils/types";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { ViewRequests } from "@/utils/request/view.request";
@@ -61,9 +56,6 @@ export default async function Page({
       schemaId: destination.result.id,
     });
   }
-
-  console.log({ isBookmarked });
-  console.log({ isLiked });
 
   return (
     <div className="w-full flex justify-center items-center">

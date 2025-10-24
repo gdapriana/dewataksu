@@ -22,7 +22,7 @@ export default async function Home() {
   ]);
 
   return (
-    <main>
+    <main suppressHydrationWarning>
       <Hero />
       <PopularDesinations
         destinations={popularDestinations.result.destinations}

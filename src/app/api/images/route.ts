@@ -1,11 +1,9 @@
 import { v2 as cloudinary } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
 import { auth } from "@/utils/auth";
 import { headers } from "next/headers";
 import { ErrorResponseMessage } from "@/utils/api-response";
-
-const prisma = new PrismaClient();
+import prisma from "@/lib/db";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,

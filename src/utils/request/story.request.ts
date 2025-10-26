@@ -79,4 +79,19 @@ export class StoryRequests {
       console.log(e);
     }
   }
+  static async DELETE(id: string) {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BETTER_AUTH_URL}/api/stories/id/${id}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+      const data = await response.json();
+      return data;
+    } catch (e) {
+      console.log(e);
+    }
+  }
 }

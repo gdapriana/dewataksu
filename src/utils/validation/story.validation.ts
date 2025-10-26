@@ -24,13 +24,15 @@ export class StoryValidations {
     orderBy: z.enum(["asc", "desc"]).optional().default("desc"),
   });
   static readonly POST = z.object({
-    name: z.string().trim(),
+    name: z.string().min(3).trim(),
+    description: z.string().min(10).trim(),
     content: z.string().trim(),
     coverId: z.string().trim().cuid("Invalid coverId format").optional(),
     isPublished: z.boolean().optional(),
   });
   static readonly PATCH = z.object({
-    name: z.string().trim().optional(),
+    name: z.string().min(3).trim().optional(),
+    description: z.string().min(10).optional(),
     content: z.string().trim().optional(),
     coverId: z
       .string()

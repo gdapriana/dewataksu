@@ -31,6 +31,8 @@ import { ImageRequests } from "@/utils/request/image.request";
 import { StoryRequests } from "@/utils/request/story.request";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Textarea } from "@/components/ui/textarea";
+import Link from "next/link";
 
 export default function StoryForm({
   mode,
@@ -51,6 +53,7 @@ export default function StoryForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
+      description: "",
       content: "",
       isPublished: false,
       coverId: undefined,
@@ -61,6 +64,7 @@ export default function StoryForm({
     if (currentStory) {
       form.reset({
         name: currentStory.name,
+        description: currentStory.description,
         content: currentStory.content,
         isPublished: currentStory.isPublished,
         coverId: currentStory.coverId || undefined,
@@ -161,120 +165,141 @@ export default function StoryForm({
   return (
     <Form {...form}>
       <form
-        className="grid grid-cols-1 gap-8 md:grid-cols-[1fr_1.4fr]"
+        className="flex flex-col gap-8 justify-start items-stretch"
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <div className="flex flex-col gap-8 justify-start items-stretch">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input
-                    disabled={loading}
-                    placeholder="Insert your story title"
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription>
-                  This is the public title of your story
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="isPublished"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <FormLabel className="mb-2">Published</FormLabel>
+        <div className="flex w-full flex-col justify-start items-stretch md:flex-row gap-4">
+          <div className="flex md:w-1/3 flex-col gap-8 justify-start items-stretch">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      placeholder="Insert your story title"
+                      {...field}
+                    />
+                  </FormControl>
                   <FormDescription>
-                    Save it to edit letter before go public
+                    This is the public title of your story
                   </FormDescription>
-                </div>
-                <FormControl>
-                  <Switch
-                    disabled={loading}
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    aria-readonly
-                  />
-                </FormControl>
-              </FormItem>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      disabled={loading}
+                      placeholder="Your short description"
+                      {...field}
+                    ></Textarea>
+                  </FormControl>
+                  <FormDescription>
+                    This is the public description of your story
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {coverPreview && (
+              <div className="relative flex justify-center items-center">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={handleDeleteFile}
+                      variant="destructive"
+                      className="absolute right-4 bottom-4 cursor-pointer"
+                    >
+                      <Trash />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete cover</TooltipContent>
+                </Tooltip>
+                <Image
+                  src={coverPreview}
+                  alt="cover"
+                  width={800}
+                  height={400}
+                  priority
+                  className="w-full aspect-video object-cover rounded-2xl max-w-3xl"
+                />
+              </div>
             )}
-          />
 
-          {coverPreview && (
-            <div className="relative flex justify-center items-center">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    onClick={handleDeleteFile}
-                    variant="destructive"
-                    className="absolute right-4 bottom-4 cursor-pointer"
-                  >
-                    <Trash />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Delete cover</TooltipContent>
-              </Tooltip>
-              <Image
-                src={coverPreview}
-                alt="cover"
-                width={800}
-                height={400}
-                priority
-                className="w-full aspect-video object-cover rounded-2xl max-w-3xl"
-              />
-            </div>
-          )}
-
-          {!coverPreview && (
-            <div className="grid w-full items-center gap-3">
-              <Label htmlFor="picture">Picture</Label>
-              <Input
-                accept="image/*"
-                id="picture"
-                type="file"
-                onChange={handleFileChange}
-              />
-            </div>
-          )}
-        </div>
-
-        <div className="md:row-span-2 order-last md:order-none">
-          <FormField
-            control={form.control}
-            name="content"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Content</FormLabel>
-                <FormControl className="pointer-events-none opacity-75 cursor-none">
-                  <TiptapEditor
-                    content={field.value}
-                    onChange={field.onChange}
-                    disabled={loading}
-                  />
-                </FormControl>
-                <FormDescription>Write your story content here</FormDescription>
-                <FormMessage />
-              </FormItem>
+            {!coverPreview && (
+              <div className="grid w-full items-center gap-3">
+                <Label htmlFor="picture">Picture</Label>
+                <Input
+                  accept="image/*"
+                  id="picture"
+                  type="file"
+                  onChange={handleFileChange}
+                />
+              </div>
             )}
-          />
-        </div>
 
-        <Button
-          disabled={loading}
-          type="submit"
-          className="md:col-span-2 order-last"
-        >
-          Submit
-        </Button>
+            <FormField
+              control={form.control}
+              name="isPublished"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="mb-2">Published</FormLabel>
+                    <FormDescription>
+                      Save it to edit letter before go public
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      disabled={loading}
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      aria-readonly
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="md:w-2/3">
+            <FormField
+              control={form.control}
+              name="content"
+              render={({ field }) => (
+                <FormItem className="h-full flex flex-col gap-2">
+                  <FormLabel>Content</FormLabel>
+                  <FormControl className="pointer-events-none h-full opacity-75 cursor-none">
+                    <TiptapEditor
+                      content={field.value}
+                      onChange={field.onChange}
+                      disabled={loading}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+        <div className="flex justify-end gap-2 items-center">
+          <Button asChild disabled={loading} variant="secondary">
+            <Link href="/profile">Cancel</Link>
+          </Button>
+          <Button disabled={loading} type="submit">
+            Submit
+          </Button>
+        </div>
       </form>
     </Form>
   );

@@ -1,8 +1,3 @@
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { StoryRelation } from "@/utils/types";
 import Image from "next/image";
 import moment from "moment";
@@ -11,17 +6,17 @@ import {
   Calendar,
   Eye,
   Heart,
-  ImageOff,
   Settings,
-  User,
+  Trash,
+  UserCircle2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatNumber } from "@/utils/helpers";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import EmptyImage from "@/app/(root)/(client)/_components/empty/image";
-import { Session } from "@/utils/auth";
+import { Button } from "@/components/ui/button";
+import DeleteStoryAlert from "@/app/(root)/_components/alert/delete/story";
 
 export function StoryCard({
   item,
@@ -31,112 +26,90 @@ export function StoryCard({
   userId?: string;
 }) {
   return (
-    <Link
-      href={`/stories/${item.slug}`}
-      className="aspect-[12/16] relative flex rounded-4xl overflow-hidden"
-    >
-      <div className="absolute z-[3] p-4 bottom-0 left-0 w-full flex justify-center items-center">
-        <div className="bg-transparent p-2 w-full rounded-xl flex-col flex justify-start items-stretch">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <p className="line-clamp-1 flex justify-start items-center text-xs text-white/90">
-                <Calendar className="w-4 h-4 mr-1" />
-                {moment(item.createdAt).format("DD MMM YYYY")}
-              </p>
-            </TooltipTrigger>
-            <TooltipContent>Uploaded time</TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <h3 className="line-clamp-2 text-white text-lg my-2 font-bold">
-                {item.name}
-              </h3>
-            </TooltipTrigger>
-            <TooltipContent>{item.name}</TooltipContent>
-          </Tooltip>
-          <div className="flex my-2 w-full justify-end items-center gap-1">
-            {item._count.likes > 0 && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Badge variant="outline" className="text-background">
-                    <Heart />
-                    {formatNumber(item._count.likes)}
-                  </Badge>
-                </TooltipTrigger>
-                <TooltipContent>Total Likes</TooltipContent>
-              </Tooltip>
-            )}
-            {item._count.bookmarks > 0 && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Badge variant="outline" className="text-background">
-                    <Bookmark />
-                    {formatNumber(item._count.bookmarks)}
-                  </Badge>
-                </TooltipTrigger>
-                <TooltipContent>Total Bookmarks</TooltipContent>
-              </Tooltip>
-            )}
-            {item._count.views > 0 && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Badge variant="outline" className="text-background">
-                    <Eye />
-                    {formatNumber(item._count.views)}
-                  </Badge>
-                </TooltipTrigger>
-                <TooltipContent>Total Views</TooltipContent>
-              </Tooltip>
-            )}
-            {userId && userId === item.author.id && (
-              <Badge asChild variant="secondary">
+    <article className="flex gap-3 overflow-hidden flex-col relative justify-start items-stretch">
+      <div className="flex relative rounded-xl overflow-hidden">
+        {!item.isPublished && (
+          <Badge
+            className="absolute top-0 right-0 mt-4 mr-4"
+            variant="destructive"
+          >
+            Unpublished
+          </Badge>
+        )}
+
+        <div className="absolute left-0 bottom-0 mb-4 ml-4 flex justify-center items-center gap-1">
+          {item._count.views > 0 && (
+            <Badge variant="default">
+              <Eye />
+              {item._count.views}
+            </Badge>
+          )}
+          {item._count.likes > 0 && (
+            <Badge variant="default">
+              <Heart />
+              {item._count.likes}
+            </Badge>
+          )}
+          {item._count.bookmarks > 0 && (
+            <Badge variant="default">
+              <Bookmark />
+              {item._count.bookmarks}
+            </Badge>
+          )}
+        </div>
+
+        <div className="absolute bottom-0 right-0 "></div>
+        {item.cover?.url ? (
+          <Image
+            width={400}
+            height={400}
+            loading="lazy"
+            src={item.cover.url}
+            alt={item.name}
+            quality={25}
+            className="aspect-square"
+          />
+        ) : (
+          <EmptyImage className={{ wrapper: "aspect-square" }} />
+        )}
+      </div>
+
+      <div className="flex flex-col justify-start items-start gap-1">
+        <div className="flex justify-start items-center w-full gap-1">
+          <Badge variant="outline" className="mb-2 mt-1">
+            <Calendar /> {moment(item.createdAt).format("DD MMM y")}
+          </Badge>
+          <Badge
+            variant="outline"
+            className="mb-2 max-w-fit flex justify-center mt-1"
+          >
+            <UserCircle2 />
+            <span className="line-clamp-1">{item.author.email}</span>
+          </Badge>
+        </div>
+
+        <h3 className="line-clamp-2 font-bold text-lg">{item.name}</h3>
+        <p className="text-muted-foreground line-clamp-3 text-sm">
+          {item.description}
+        </p>
+        <div className="flex mt-4 w-full justify-end items-center flex-wrap gap-2">
+          {userId && item.author.id === userId && (
+            <>
+              <DeleteStoryAlert item={item} />
+              <Button variant="outline" asChild size="sm">
                 <Link href={`/profile/story/${item.id}`}>
                   <Settings />
                   Edit
                 </Link>
-              </Badge>
-            )}
-          </div>
-          <div className="flex bg-background py-2 px-3 rounded-2xl items-stretch gap-3">
-            <div className="flex justify-center items-center">
-              <Avatar className="rounded-lg">
-                <AvatarFallback>
-                  <User className="w-3 h-3" />
-                </AvatarFallback>
-                <AvatarImage
-                  src={item.author.image || item.author.profileImage?.url || ""}
-                />
-              </Avatar>
-            </div>
-            <div className="flex flex-col justify-center items-start">
-              <p className="line-clamp-1 font-semibold">{item.author.name}</p>
-              <p className="line-clamp-1 text-sm text-foreground">
-                {item.author.email}
-              </p>
-            </div>
-          </div>
+              </Button>
+            </>
+          )}
+          <Button variant="default" asChild size="sm">
+            <Link href={`/stories/${item.slug}`}>Detail</Link>
+          </Button>
         </div>
       </div>
-      <div className="absolute z-[2] left-0 top-0 w-full h-full card-gradient"></div>
-      {item?.cover?.url ? (
-        <Image
-          src={item?.cover?.url}
-          alt={item.name}
-          width={400}
-          height={800}
-          loading="lazy"
-          quality={25}
-          className="absolute z-[1] brightness-50 w-full h-full object-cover left-0 top-0"
-        />
-      ) : (
-        <EmptyImage
-          className={{
-            wrapper: "bg-neutral-900",
-            icon: "w-8 h-8 text-muted-foreground/20 mb-20",
-          }}
-        />
-      )}
-    </Link>
+    </article>
   );
 }
 

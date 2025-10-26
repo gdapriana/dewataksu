@@ -111,6 +111,7 @@ export async function POST(req: NextRequest) {
     const item = await table.create({
       data: {
         name: validatedBody.name,
+        description: validatedBody.description,
         content: validatedBody.content,
         userId: session.user.id,
         coverId: validatedBody.coverId,

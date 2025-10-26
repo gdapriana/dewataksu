@@ -47,6 +47,7 @@ export class StoryResponses {
     name: true,
     slug: true,
     content: true,
+    description: true,
     isPublished: true,
     author: {
       select: {

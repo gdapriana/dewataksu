@@ -78,3 +78,38 @@ export async function PATCH(
   }
   return ErrorResponseMessage.INTERNAL_SERVER_ERROR();
 }
+
+export async function DELETE(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session) return ErrorResponseMessage.FORBIDDEN();
+    const { id } = await context.params;
+    const valdatedBody = validateRequest(validation.DELETE, id);
+    const checkItem = await table.findUnique({
+      where: { id },
+      select: { id: true, author: { select: { id: true } } },
+    });
+    if (!checkItem) return ErrorResponseMessage.NOT_FOUND("STORY");
+    if (session.user.id !== checkItem.author.id)
+      return ErrorResponseMessage.FORBIDDEN();
+    const deleted = await table.delete({
+      where: { id },
+      select: {
+        id: true,
+      },
+    });
+    return NextResponse.json({
+      ...apiSuccessResponse("DELETE", "STORY"),
+      result: deleted,
+    });
+  } catch (e) {
+    if (e instanceof ZodError) return ErrorResponseMessage.ZOD_ERROR(e);
+  }
+  return ErrorResponseMessage.INTERNAL_SERVER_ERROR();
+}

@@ -9,7 +9,7 @@ export default async function Stories({ userId }: { userId?: string }) {
   );
 
   return (
-    <div className="grid gap-3 pt-5 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    <div className="grid gap-4 gap-y-8 pt-5 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {stories.result.stories &&
         stories.result.stories.length > 0 &&
         stories.result.stories.map((item: StoryRelation) => (

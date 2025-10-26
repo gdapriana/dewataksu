@@ -1,9 +1,7 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useEditor, EditorContent, Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
-import Link from "@tiptap/extension-link";
 import Superscript from "@tiptap/extension-superscript";
 import Subscript from "@tiptap/extension-subscript";
 import Highlight from "@tiptap/extension-highlight";
@@ -35,7 +33,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
-import { StoryRelation } from "@/utils/types";
 
 const MenuBar = ({ editor }: { editor: Editor | null }) => {
   if (!editor) return null;
@@ -55,7 +52,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
   };
 
   return (
-    <div className="border-b border-gray-200 bg-white p-2 flex items-center gap-1 flex-wrap">
+    <div className="border-b p-2 flex items-center gap-1 flex-wrap">
       <Button
         variant="ghost"
         type="button"
@@ -352,12 +349,12 @@ export default function TiptapEditor({
     return <div className="border p-4 rounded-md">Loading editor...</div>;
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
-      <div className="border border-gray-300 rounded-lg overflow-hidden shadow-sm bg-white">
+    <div className="w-full h-full mx-auto">
+      <div className="border rounded-lg overflow-hidden shadow-sm">
         <MenuBar editor={editor} />
         <EditorContent
           editor={editor}
-          className="min-h-[400px] max-h-[600px] overflow-y-auto"
+          className="min-h-[400px] h-full overflow-y-auto"
         />
       </div>
 

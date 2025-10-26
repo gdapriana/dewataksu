@@ -6,6 +6,7 @@ model Story {
     isPublished Boolean @default(true)
     coverId     String?
     userId      String
+    description String
 
     cover  Image? @relation(fields: [coverId], references: [id], onDelete: Cascade)
     author User   @relation(fields: [userId], references: [id], onDelete: Cascade)

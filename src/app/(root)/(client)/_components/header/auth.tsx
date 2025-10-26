@@ -18,13 +18,13 @@ export default function AuthArea() {
   if (session?.user?.role === "ADMIN" && !isPending) {
     return (
       <div className="lg:flex hidden justify-center items-center gap-2">
-        <Button size="sm" asChild>
+        <Button variant="outline" size="sm" asChild>
           <Link href={"/admin"}>
             <Settings />
             Admin
           </Link>
         </Button>
-        <Button size="sm" onClick={onSignOut}>
+        <Button variant="outline" size="sm" onClick={onSignOut}>
           <LogOut />
           Logout
         </Button>
@@ -34,7 +34,7 @@ export default function AuthArea() {
 
   if (session && !isPending) {
     return (
-      <Button size="sm" onClick={onSignOut}>
+      <Button variant="outline" size="sm" onClick={onSignOut}>
         Logout
       </Button>
     );

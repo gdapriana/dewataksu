@@ -13,6 +13,7 @@ export class ImageRequests {
         {
           method: "POST",
           body: formData,
+          credentials: "include",
         }
       );
       const data = await res.json();

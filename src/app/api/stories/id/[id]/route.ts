@@ -1,9 +1,11 @@
 import prisma from "@/lib/db";
 import { apiSuccessResponse, ErrorResponseMessage } from "@/utils/api-response";
+import { auth } from "@/utils/auth";
 import { slugifySetting } from "@/utils/helpers";
 import { StoryResponses } from "@/utils/response/story.response";
 import { StoryValidations } from "@/utils/validation/story.validation";
 import { validateRequest } from "@/utils/validation/validate";
+import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import slugify from "slugify";
 import z, { ZodError } from "zod";
@@ -40,13 +42,21 @@ export async function PATCH(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session) return ErrorResponseMessage.FORBIDDEN();
     const { id } = await context.params;
     const body: z.infer<typeof validation.PATCH> = await req.json();
     const valdatedBody = validateRequest(validation.PATCH, body);
     const checkItem = await table.findUnique({
       where: { id },
-      select: { id: true },
+      select: { id: true, author: { select: { id: true } } },
     });
+    if (!checkItem) return ErrorResponseMessage.NOT_FOUND("STORY");
+    if (session.user.id !== checkItem.author.id)
+      return ErrorResponseMessage.FORBIDDEN();
     let newSlug = undefined;
     if (valdatedBody.name) {
       const unique = Date.now() + Math.random();
@@ -54,13 +64,13 @@ export async function PATCH(
     }
     const updated = await table.update({
       where: { id },
-      data: valdatedBody,
+      data: { ...valdatedBody, slug: newSlug },
       select: {
         id: true,
       },
     });
     return NextResponse.json({
-      ...apiSuccessResponse("CREATE", "STORY"),
+      ...apiSuccessResponse("UPDATE", "STORY"),
       result: updated,
     });
   } catch (e) {

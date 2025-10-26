@@ -1,6 +1,9 @@
 import { v2 as cloudinary } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
+import { auth } from "@/utils/auth";
+import { headers } from "next/headers";
+import { ErrorResponseMessage } from "@/utils/api-response";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
@@ -10,6 +13,11 @@ cloudinary.config({
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session) return ErrorResponseMessage.FORBIDDEN();
     const formData = await req.formData();
     const file = formData.get("file") as File;
 

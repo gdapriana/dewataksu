@@ -19,7 +19,6 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import TiptapEditor from "@/app/(root)/_components/tiptap/editor";
 import { Button } from "@/components/ui/button";
-import Dropzone from "@/app/(root)/(client)/profile/story/_components/form/dropzone";
 import Image from "next/image";
 import { Label } from "@/components/ui/label";
 import { Trash } from "lucide-react";
@@ -30,8 +29,8 @@ import {
 } from "@/components/ui/tooltip";
 import { ImageRequests } from "@/utils/request/image.request";
 import { StoryRequests } from "@/utils/request/story.request";
-
-const formSchema = StoryValidations.POST;
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function StoryForm({
   mode,
@@ -43,6 +42,10 @@ export default function StoryForm({
   const [loading, setLoading] = useState<boolean>(false);
   const [coverPreview, setCoverPreview] = useState<string | null>();
   const [selectedFile, setSelectedFile] = useState<File>();
+  const router = useRouter();
+
+  const formSchema =
+    mode === "post" ? StoryValidations.POST : StoryValidations.PATCH;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -79,26 +82,79 @@ export default function StoryForm({
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
     if (mode === "post") {
-      if (selectedFile) {
-        const cover = await ImageRequests.POST(selectedFile);
-        await StoryRequests.POST({ ...values, coverId: cover.result.id });
-      } else {
-        await StoryRequests.POST({ ...values, coverId: undefined });
-      }
+      toast.promise(
+        (async () => {
+          if (selectedFile) {
+            const cover = await ImageRequests.POST(selectedFile);
+            const res = await StoryRequests.POST({
+              ...values,
+              coverId: cover.result.id,
+            });
+            if (res.errors)
+              throw new Error(res.error.message || "invalid credentials");
+            return res;
+          } else {
+            const res = await StoryRequests.POST({
+              ...values,
+              coverId: undefined,
+            });
+
+            if (res.errors)
+              throw new Error(res.error.message || "invalid credentials");
+
+            return res;
+          }
+        })(),
+        {
+          loading: "Posting...",
+          success: () => {
+            router.push("/profile");
+            return "Success!";
+          },
+          error: (err) => err.message,
+          finally: () => {
+            setLoading(false);
+          },
+        }
+      );
     } else {
-      if (selectedFile) {
-        const cover = await ImageRequests.POST(selectedFile);
-        await StoryRequests.PATCH(currentStory?.id, {
-          ...values,
-          coverId: cover.result.id,
-        });
-      } else {
-        await StoryRequests.PATCH(currentStory?.id, {
-          ...values,
-          coverId: coverPreview === null ? null : undefined,
-        });
-      }
+      toast.promise(
+        (async () => {
+          if (selectedFile) {
+            const cover = await ImageRequests.POST(selectedFile);
+            const res = await StoryRequests.PATCH(currentStory?.id, {
+              ...values,
+              coverId: cover.result.id,
+            });
+            if (res.errors)
+              throw new Error(res.error.message || "invalid credentials");
+            return res;
+          } else {
+            const res = await StoryRequests.PATCH(currentStory?.id, {
+              ...values,
+              coverId: coverPreview === null ? null : undefined,
+            });
+
+            if (res.errors)
+              throw new Error(res.error.message || "invalid credentials");
+
+            return res;
+          }
+        })(),
+        {
+          loading: "Updating..",
+          success: () => {
+            router.push("/profile");
+            return "Success!";
+          },
+          error: (err) => err.message,
+          finally: () => {
+            setLoading(false);
+          },
+        }
+      );
     }
   }
 
@@ -198,7 +254,7 @@ export default function StoryForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Content</FormLabel>
-                <FormControl>
+                <FormControl className="pointer-events-none opacity-75 cursor-none">
                   <TiptapEditor
                     content={field.value}
                     onChange={field.onChange}
@@ -212,7 +268,11 @@ export default function StoryForm({
           />
         </div>
 
-        <Button type="submit" className="md:col-span-2 order-last">
+        <Button
+          disabled={loading}
+          type="submit"
+          className="md:col-span-2 order-last"
+        >
           Submit
         </Button>
       </form>

@@ -2,6 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { UserRelation } from "@/utils/types";
 import { Settings } from "lucide-react";
+import Link from "next/link";
 
 export default function Highlight({
   profile,
@@ -21,7 +22,9 @@ export default function Highlight({
         <p className="text-sm text-muted-foreground">{profile?.email}</p>
       </div>
       <div className="flex justify-center items-center gap-2">
-        <Button>Add Story</Button>
+        <Button asChild>
+          <Link href="/profile/story">Add Story</Link>
+        </Button>
         <Button variant="secondary">
           <Settings />
         </Button>

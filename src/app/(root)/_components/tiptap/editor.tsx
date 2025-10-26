@@ -58,6 +58,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
     <div className="border-b border-gray-200 bg-white p-2 flex items-center gap-1 flex-wrap">
       <Button
         variant="ghost"
+        type="button"
         size="sm"
         onClick={() => editor.chain().focus().undo().run()}
         disabled={!editor.can().undo()}
@@ -68,6 +69,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       <Button
         variant="ghost"
         size="sm"
+        type="button"
         onClick={() => editor.chain().focus().redo().run()}
         disabled={!editor.can().redo()}
         className="h-8 w-8 p-0"
@@ -79,7 +81,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="sm" className="h-8">
+          <Button type="button" variant="ghost" size="sm" className="h-8">
             <Heading1 className="h-4 w-4 mr-1" />
             <span className="text-xs">▼</span>
           </Button>
@@ -119,6 +121,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       <Button
         variant="ghost"
         size="sm"
+        type="button"
         onClick={() => editor.chain().focus().toggleBold().run()}
         className={`h-8 w-8 p-0 ${
           editor.isActive("bold") ? "bg-gray-200" : ""
@@ -129,6 +132,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       <Button
         variant="ghost"
         size="sm"
+        type="button"
         onClick={() => editor.chain().focus().toggleItalic().run()}
         className={`h-8 w-8 p-0 ${
           editor.isActive("italic") ? "bg-gray-200" : ""
@@ -139,6 +143,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       <Button
         variant="ghost"
         size="sm"
+        type="button"
         onClick={() => editor.chain().focus().toggleStrike().run()}
         className={`h-8 w-8 p-0 ${
           editor.isActive("strike") ? "bg-gray-200" : ""
@@ -149,6 +154,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       <Button
         variant="ghost"
         size="sm"
+        type="button"
         onClick={() => editor.chain().focus().toggleUnderline().run()}
         className={`h-8 w-8 p-0 ${
           editor.isActive("underline") ? "bg-gray-200" : ""
@@ -159,6 +165,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       <Button
         variant="ghost"
         size="sm"
+        type="button"
         onClick={() => editor.chain().focus().toggleCode().run()}
         className={`h-8 w-8 p-0 ${
           editor.isActive("code") ? "bg-gray-200" : ""
@@ -169,6 +176,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       <Button
         variant="ghost"
         size="sm"
+        type="button"
         onClick={() => editor.chain().focus().toggleHighlight().run()}
         className={`h-8 w-8 p-0 ${
           editor.isActive("highlight") ? "bg-gray-200" : ""
@@ -179,6 +187,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       <Button
         variant="ghost"
         size="sm"
+        type="button"
         onClick={addLink}
         className={`h-8 w-8 p-0 ${
           editor.isActive("link") ? "bg-gray-200" : ""
@@ -192,6 +201,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       <Button
         variant="ghost"
         size="sm"
+        type="button"
         onClick={() => editor.chain().focus().toggleSuperscript().run()}
         className={`h-8 w-8 p-0 ${
           editor.isActive("superscript") ? "bg-gray-200" : ""
@@ -202,6 +212,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       <Button
         variant="ghost"
         size="sm"
+        type="button"
         onClick={() => editor.chain().focus().toggleSubscript().run()}
         className={`h-8 w-8 p-0 ${
           editor.isActive("subscript") ? "bg-gray-200" : ""
@@ -215,6 +226,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       <Button
         variant="ghost"
         size="sm"
+        type="button"
         onClick={() => editor.chain().focus().setTextAlign("left").run()}
         className={`h-8 w-8 p-0 ${
           editor.isActive({ textAlign: "left" }) ? "bg-gray-200" : ""
@@ -225,6 +237,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       <Button
         variant="ghost"
         size="sm"
+        type="button"
         onClick={() => editor.chain().focus().setTextAlign("center").run()}
         className={`h-8 w-8 p-0 ${
           editor.isActive({ textAlign: "center" }) ? "bg-gray-200" : ""
@@ -234,6 +247,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       </Button>
       <Button
         variant="ghost"
+        type="button"
         size="sm"
         onClick={() => editor.chain().focus().setTextAlign("right").run()}
         className={`h-8 w-8 p-0 ${
@@ -245,6 +259,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       <Button
         variant="ghost"
         size="sm"
+        type="button"
         onClick={() => editor.chain().focus().setTextAlign("justify").run()}
         className={`h-8 w-8 p-0 ${
           editor.isActive({ textAlign: "justify" }) ? "bg-gray-200" : ""
@@ -258,6 +273,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       <Button
         variant="ghost"
         size="sm"
+        type="button"
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         className={`h-8 w-8 p-0 ${
           editor.isActive("bulletList") ? "bg-gray-200" : ""
@@ -268,6 +284,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       <Button
         variant="ghost"
         size="sm"
+        type="button"
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
         className={`h-8 w-8 p-0 ${
           editor.isActive("orderedList") ? "bg-gray-200" : ""
@@ -281,6 +298,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       <Button
         variant="ghost"
         size="sm"
+        type="button"
         onClick={addImage}
         className="h-8 w-8 p-0"
       >

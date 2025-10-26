@@ -38,12 +38,16 @@ export class StoryRequests {
     }
   }
 
-  static async POST(body: z.infer<typeof StoryValidations.POST>) {
+  static async POST(body: any) {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BETTER_AUTH_URL}/api/stories`,
         {
           method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify(body),
           credentials: "include",
         }
@@ -55,15 +59,16 @@ export class StoryRequests {
     }
   }
 
-  static async PATCH(
-    id: string | undefined,
-    body: z.infer<typeof StoryValidations.PATCH>
-  ) {
+  static async PATCH(id: string | undefined, body: any) {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BETTER_AUTH_URL}/api/stories/${id}`,
+        `${process.env.NEXT_PUBLIC_BETTER_AUTH_URL}/api/stories/id/${id}`,
         {
           method: "PATCH",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify(body),
           credentials: "include",
         }

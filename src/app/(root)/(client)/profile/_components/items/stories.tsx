@@ -13,7 +13,7 @@ export default async function Stories({ userId }: { userId?: string }) {
       {stories.result.stories &&
         stories.result.stories.length > 0 &&
         stories.result.stories.map((item: StoryRelation) => (
-          <StoryCard key={item.id} item={item} />
+          <StoryCard userId={userId} key={item.id} item={item} />
         ))}
     </div>
   );

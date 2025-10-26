@@ -50,6 +50,7 @@ export class StoryResponses {
     isPublished: true,
     author: {
       select: {
+        id: true,
         name: true,
         email: true,
         image: true,

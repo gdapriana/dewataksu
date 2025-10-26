@@ -6,15 +6,30 @@ import {
 import { StoryRelation } from "@/utils/types";
 import Image from "next/image";
 import moment from "moment";
-import { Bookmark, Calendar, Eye, Heart, ImageOff, User } from "lucide-react";
+import {
+  Bookmark,
+  Calendar,
+  Eye,
+  Heart,
+  ImageOff,
+  Settings,
+  User,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatNumber } from "@/utils/helpers";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import EmptyImage from "@/app/(root)/(client)/_components/empty/image";
+import { Session } from "@/utils/auth";
 
-export function StoryCard({ item }: { item: StoryRelation }) {
+export function StoryCard({
+  item,
+  userId,
+}: {
+  item: StoryRelation;
+  userId?: string;
+}) {
   return (
     <Link
       href={`/stories/${item.slug}`}
@@ -43,7 +58,7 @@ export function StoryCard({ item }: { item: StoryRelation }) {
             {item._count.likes > 0 && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Badge variant="secondary">
+                  <Badge variant="outline" className="text-background">
                     <Heart />
                     {formatNumber(item._count.likes)}
                   </Badge>
@@ -54,7 +69,7 @@ export function StoryCard({ item }: { item: StoryRelation }) {
             {item._count.bookmarks > 0 && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Badge variant="secondary">
+                  <Badge variant="outline" className="text-background">
                     <Bookmark />
                     {formatNumber(item._count.bookmarks)}
                   </Badge>
@@ -65,13 +80,21 @@ export function StoryCard({ item }: { item: StoryRelation }) {
             {item._count.views > 0 && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Badge variant="secondary">
+                  <Badge variant="outline" className="text-background">
                     <Eye />
                     {formatNumber(item._count.views)}
                   </Badge>
                 </TooltipTrigger>
                 <TooltipContent>Total Views</TooltipContent>
               </Tooltip>
+            )}
+            {userId && userId === item.author.id && (
+              <Badge asChild variant="secondary">
+                <Link href={`/profile/story/${item.id}`}>
+                  <Settings />
+                  Edit
+                </Link>
+              </Badge>
             )}
           </div>
           <div className="flex bg-background py-2 px-3 rounded-2xl items-stretch gap-3">
@@ -103,7 +126,7 @@ export function StoryCard({ item }: { item: StoryRelation }) {
           height={800}
           loading="lazy"
           quality={25}
-          className="absolute z-[1] w-full h-full object-cover left-0 top-0"
+          className="absolute z-[1] brightness-50 w-full h-full object-cover left-0 top-0"
         />
       ) : (
         <EmptyImage

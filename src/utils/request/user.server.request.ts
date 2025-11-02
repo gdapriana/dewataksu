@@ -95,7 +95,7 @@ export class UserServerRequests {
             "Content-Type": "application/json",
             Cookie: (await headers()).get("cookie") ?? "",
           },
-          next: { revalidate: 10 },
+          next: { revalidate: 1 },
         }
       );
       const data = await response.json();

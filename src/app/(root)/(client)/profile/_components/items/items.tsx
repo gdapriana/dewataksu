@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Liked from "@/app/(root)/(client)/profile/_components/items/liked";
 import Stories from "@/app/(root)/(client)/profile/_components/items/stories";
 import Bookmarked from "@/app/(root)/(client)/profile/_components/items/bookmarked";
+import ProfileItemsSkeleton from "@/components/skeleton/profile-items";
 
 export default function Items({ userId }: { userId?: string }) {
   return (
@@ -15,13 +16,13 @@ export default function Items({ userId }: { userId?: string }) {
         </TabsList>
 
         <TabsContent value="stories">
-          <Suspense fallback={<p className="p-4">Loading your stories...</p>}>
+          <Suspense fallback={<ProfileItemsSkeleton />}>
             <Stories userId={userId} />
           </Suspense>
         </TabsContent>
 
         <TabsContent value="bookmarked">
-          <Suspense fallback={<p className="p-4">Loading your bookmarks...</p>}>
+          <Suspense fallback={<ProfileItemsSkeleton />}>
             <Tabs defaultValue="destinations">
               <TabsList className="w-full">
                 <TabsTrigger value="destinations">Destinations</TabsTrigger>
@@ -42,7 +43,7 @@ export default function Items({ userId }: { userId?: string }) {
         </TabsContent>
 
         <TabsContent value="liked">
-          <Suspense fallback={<p className="p-4">Loading liked items...</p>}>
+          <Suspense fallback={<ProfileItemsSkeleton />}>
             <Tabs defaultValue="destinations">
               <TabsList className="w-full">
                 <TabsTrigger value="destinations">Destinations</TabsTrigger>

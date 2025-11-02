@@ -1,6 +1,6 @@
 import Highlight from "@/app/(root)/(client)/profile/_components/highlight/highlight";
 import Items from "@/app/(root)/(client)/profile/_components/items/items";
-import ProfileItems from "@/components/skeleton/profile-items";
+import ProfileItemsSkeleton from "@/components/skeleton/profile-items";
 import { auth } from "@/utils/auth";
 import { UserServerRequests } from "@/utils/request/user.server.request";
 import { UserRelation } from "@/utils/types";
@@ -19,7 +19,7 @@ export default async function Page() {
     <div className="flex w-full flex-col justify-start items-stretch">
       <Highlight profile={user.result} />
 
-      <Suspense fallback={<ProfileItems />}>
+      <Suspense fallback={<ProfileItemsSkeleton />}>
         <Items userId={session?.user.id} />
       </Suspense>
     </div>

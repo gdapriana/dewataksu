@@ -18,7 +18,9 @@ export async function GET(req: NextRequest) {
     const queryParams = Object.fromEntries(searchParams.entries());
     const validatedQuery = validateRequest(validation.QUERY, queryParams);
     const page = validatedQuery.page || 1;
-    const limit = validatedQuery.limit || 100;
+    const limit = validatedQuery.limit || 5;
+    const skip = (page - 1) * limit;
+
     const where: Prisma.CategoryWhereInput = {};
 
     if (validatedQuery.search) {
@@ -37,6 +39,7 @@ export async function GET(req: NextRequest) {
       table.count({ where }),
       table.findMany({
         where,
+        skip,
         take: limit,
         orderBy,
         select: response.GETs,

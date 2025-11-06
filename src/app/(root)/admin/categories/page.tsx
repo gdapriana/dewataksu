@@ -1,24 +1,18 @@
-import TraditionsTable from "@/app/(root)/admin/traditions/_components/items/table";
+import CategoriesTable from "@/app/(root)/admin/categories/_components/table";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
 } from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { DistrictRequests } from "@/utils/request/district.request";
-import { DistrictRelation, Pagination } from "@/utils/types";
-import { Separator } from "@radix-ui/react-separator";
-const pageInfo = {
-  name: "Traditions",
-};
-export default async function Page() {
-  const districts: {
-    success: boolean;
-    result: { districts: DistrictRelation[]; pagination: Pagination };
-    message: string;
-  } = await DistrictRequests.GETs("sortBy=popular");
 
+const pageInfo = {
+  name: "Categories",
+};
+
+export default async function Page() {
   return (
     <main className="flex flex-col justify-start items-stretch h-dvh">
       <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
@@ -38,7 +32,7 @@ export default async function Page() {
         </div>
       </header>
       <div className="flex overflow-auto flex-1 flex-col gap-4 p-4 pt-0">
-        <TraditionsTable districts={districts.result.districts} />
+        <CategoriesTable />
       </div>
     </main>
   );

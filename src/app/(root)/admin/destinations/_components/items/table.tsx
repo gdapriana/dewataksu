@@ -1,120 +1,371 @@
-import React from "react";
+"use client";
+import { Input } from "@/components/ui/input";
+import {
+  CategoryRelation,
+  DestinationRelation,
+  DistrictRelation,
+} from "@/utils/types";
+
 import {
   Table,
-  TableBody,
-  TableCell,
-  TableHead,
   TableHeader,
+  TableHead,
+  TableBody,
   TableRow,
+  TableCell,
 } from "@/components/ui/table";
+import { useCallback, useEffect, useState } from "react";
+import {
+  Bookmark,
+  Eye,
+  EyeOff,
+  Heart,
+  Layers,
+  Loader2,
+  Map,
+  MessageCircleMore,
+  Pencil,
+  Trash2,
+} from "lucide-react";
+import Image from "next/image";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import CustomTooltip from "@/app/(root)/_components/custom/custom-tooltip";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { formatNumber } from "@/utils/helpers";
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Eye, Edit } from "lucide-react";
-import { DestinationRelation } from "@/utils/types";
-import Link from "next/link";
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function DestinationsTable({
-  destinations,
+  districts,
+  categories,
 }: {
-  destinations: DestinationRelation[];
+  districts: DistrictRelation[];
+  categories: CategoryRelation[];
 }) {
+  const [destinations, setDestinations] = useState<DestinationRelation[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [category, setCategory] = useState<string>("all");
+  const [district, setDistrict] = useState<string>("all");
+  const [sort, setSort] = useState<string>("createdAt");
+  const [order, setOrder] = useState<string>("desc");
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 500);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const fetchDestinations = useCallback(
+    async (controller: AbortController) => {
+      try {
+        setLoading(true);
+        const params: Record<string, string> = {
+          page: String(page),
+          limit: "8",
+          sortBy: sort,
+          orderBy: order,
+          ...(debouncedSearch ? { search: debouncedSearch } : {}),
+        };
+
+        if (category !== "all") params.category = category;
+        if (district !== "all") params.district = district;
+
+        const query = new URLSearchParams(params);
+
+        const res = await fetch(`/api/destinations?${query.toString()}`, {
+          signal: controller.signal,
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          setDestinations(data.result.destinations);
+          setTotalPages(data.result.pagination.pages);
+        }
+      } catch (err) {
+        if (!(err instanceof DOMException && err.name === "AbortError"))
+          console.error("Fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [page, debouncedSearch, category, district, sort, order]
+  );
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchDestinations(controller);
+    return () => controller.abort();
+  }, [fetchDestinations]);
+
   return (
-    <div className="w-full overflow-x-auto">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Cover</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>District</TableHead>
-            <TableHead>Tags</TableHead>
-            <TableHead>Price</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {destinations.map((dest: DestinationRelation) => (
-            <TableRow key={dest.id} className="align-top">
-              <TableCell>
-                <Avatar>
-                  <AvatarFallback>
-                    {dest.name
-                      .split(" ")
-                      .slice(0, 2)
-                      .map((s) => s[0])
-                      .join("")}
-                  </AvatarFallback>
-                </Avatar>
-              </TableCell>
-              <TableCell>
-                <div className="flex flex-col">
-                  <span className="font-medium">{dest.name}</span>
-                  <span className="text-sm text-muted-foreground truncate">
-                    {dest.address}
-                  </span>
-                </div>
-              </TableCell>
-              <TableCell>
-                <Badge variant="secondary">{dest.category?.name || "-"}</Badge>
-              </TableCell>
-              <TableCell>{dest.district?.name || "-"}</TableCell>
-              <TableCell>
-                <div className="flex flex-wrap gap-1">
-                  {(dest.tags || []).map((t: any) => (
-                    <Badge key={t.name} variant="outline">
-                      {t.name}
-                    </Badge>
+    <div className="w-full space-y-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <h2 className="text-lg font-semibold">Destinations</h2>
+        <div className="flex flex-1 gap-2 flex-wrap justify-end items-center">
+          <Select onValueChange={(e) => setCategory(e)}>
+            <SelectTrigger className="w-max">
+              <SelectValue placeholder="Category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Category</SelectLabel>
+                {categories &&
+                  categories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.slug}>
+                      {cat.name}
+                    </SelectItem>
                   ))}
-                </div>
-              </TableCell>
-              <TableCell>
-                {dest.price && dest.price === 0
-                  ? "Free"
-                  : new Intl.NumberFormat().format(dest.price || 0)}
-              </TableCell>
-              <TableCell>
-                {dest.isPublished ? (
-                  <Badge className="text-sm">Published</Badge>
-                ) : (
-                  <Badge variant="destructive">Draft</Badge>
-                )}
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  <Button asChild size="sm" variant="ghost" title="View">
-                    <Link href={`/destinations/${dest.slug}`}>
-                      <Eye size={16} />
-                    </Link>
-                  </Button>
-                  <Button size="sm" variant="ghost" title="Edit">
-                    <Edit size={16} />
-                  </Button>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button size="sm" variant="ghost">
-                        <MoreHorizontal size={16} />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuItem>Duplicate</DropdownMenuItem>
-                      <DropdownMenuItem>Archive</DropdownMenuItem>
-                      <DropdownMenuItem>Delete</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </TableCell>
+                <SelectItem value="all">All</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Select onValueChange={(e) => setDistrict(e)}>
+            <SelectTrigger className="w-max">
+              <SelectValue placeholder="District" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>District</SelectLabel>
+                {districts &&
+                  districts.map((dis) => (
+                    <SelectItem key={dis.id} value={dis.slug}>
+                      {dis.name}
+                    </SelectItem>
+                  ))}
+                <SelectItem value="all">All</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Select onValueChange={(e) => setSort(e)}>
+            <SelectTrigger className="w-max">
+              <SelectValue placeholder="Sort By" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Sort By</SelectLabel>
+                <SelectItem value="createdAt">Created At</SelectItem>
+                <SelectItem value="updatedAt">Updated At</SelectItem>
+                <SelectItem value="price">Price</SelectItem>
+                <SelectItem value="liked">Liked</SelectItem>
+                <SelectItem value="viewed">Viewed</SelectItem>
+                <SelectItem value="bookmarked">Bookmarked</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Select onValueChange={(e) => setOrder(e)}>
+            <SelectTrigger className="w-max">
+              <SelectValue placeholder="Order By" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Order By</SelectLabel>
+                <SelectItem value="desc">Descending</SelectItem>
+                <SelectItem value="asc">Ascending</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Input
+            placeholder="Search destinations..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            className="w-full sm:w-64 bg-neutral-900 text-sm"
+          />
+        </div>
+      </div>
+
+      <div className="rounded-md overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="">
+              <TableHead className="text-neutral-400">Cover</TableHead>
+              <TableHead className="text-neutral-400 flex-1">
+                Name and Address
+              </TableHead>
+              <TableHead className="text-neutral-400">Category</TableHead>
+              <TableHead className="text-neutral-400">District</TableHead>
+              <TableHead className="text-neutral-400">Status</TableHead>
+              <TableHead className="text-neutral-400">Statistic</TableHead>
+              <TableHead className="text-right text-neutral-400">
+                Actions
+              </TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+
+          <TableBody>
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-6">
+                  <Loader2 className="animate-spin inline w-5 h-5 text-gray-400" />
+                </TableCell>
+              </TableRow>
+            ) : categories.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={6}
+                  className="text-center py-6 text-neutral-400"
+                >
+                  No destinations found.
+                </TableCell>
+              </TableRow>
+            ) : (
+              destinations.map((des) => (
+                <TableRow
+                  key={des.id}
+                  className="hover:bg-neutral-900 transition-colors"
+                >
+                  <TableCell>
+                    {des.cover?.url ? (
+                      <Image
+                        loading="lazy"
+                        quality={10}
+                        src={des.cover.url}
+                        alt={des.name}
+                        className="w-20 aspect-video rounded-md object-cover"
+                      />
+                    ) : (
+                      <div className="w-20 aspect-video rounded-md bg-neutral-800 flex items-center justify-center text-xs text-neutral-500">
+                        {des.name
+                          .split(" ")
+                          .map((w) => w[0])
+                          .slice(0, 2)
+                          .join("")
+                          .toUpperCase()}
+                      </div>
+                    )}
+                  </TableCell>
+                  <TableCell className="flex w-[300px] flex-col justify-center items-start">
+                    <CustomTooltip content={des.name}>
+                      <p className="font-semibold line-clamp-2 overflow-ellipsis">
+                        {des.name}
+                      </p>
+                    </CustomTooltip>
+                    <CustomTooltip content={des.content}>
+                      <p className="line-clamp-1 text-muted-foreground overflow-ellipsis w-full">
+                        {des.content}
+                      </p>
+                    </CustomTooltip>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline">
+                      <Layers />
+                      {des.category.name}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline">
+                      <Map />
+                      {des.district.name}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {des.isPublished ? (
+                      <CustomTooltip content="Published">
+                        <Badge className="bg-teal-500">
+                          <Eye />
+                        </Badge>
+                      </CustomTooltip>
+                    ) : (
+                      <CustomTooltip content="Unpublished">
+                        <Badge className="bg-rose-500">
+                          <EyeOff />
+                        </Badge>
+                      </CustomTooltip>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-1 flex-wrap justify-start items-center">
+                      <CustomTooltip content={`${des._count.likes} likes`}>
+                        <Badge variant="secondary">
+                          <Heart /> {des._count.likes}
+                        </Badge>
+                      </CustomTooltip>
+                      <CustomTooltip
+                        content={`${des._count.bookmarks} bookmarks`}
+                      >
+                        <Badge variant="secondary">
+                          <Bookmark /> {formatNumber(des._count.bookmarks)}
+                        </Badge>
+                      </CustomTooltip>
+                      <CustomTooltip content={`${des._count.views} views`}>
+                        <Badge variant="secondary">
+                          <Eye /> {formatNumber(des._count.views)}
+                        </Badge>
+                      </CustomTooltip>
+                      <CustomTooltip
+                        content={`${des._count.comments} comments`}
+                      >
+                        <Badge variant="secondary">
+                          <MessageCircleMore />{" "}
+                          {formatNumber(des._count.comments)}
+                        </Badge>
+                      </CustomTooltip>
+                    </div>
+                  </TableCell>
+
+                  <TableCell className="flex justify-end gap-2">
+                    <CustomTooltip content="View">
+                      <Button variant="ghost" size="icon">
+                        <Eye className="w-4 h-4 text-neutral-300" />
+                      </Button>
+                    </CustomTooltip>
+                    <CustomTooltip content="Edit">
+                      <Button variant="ghost" size="icon">
+                        <Pencil className="w-4 h-4 text-neutral-300" />
+                      </Button>
+                    </CustomTooltip>
+                    <CustomTooltip content="Delete">
+                      <Button variant="ghost" size="icon">
+                        <Trash2 className="w-4 h-4 text-red-500" />
+                      </Button>
+                    </CustomTooltip>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="flex justify-between items-center text-sm text-neutral-400">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setPage((p) => Math.max(1, p - 1))}
+          disabled={page <= 1 || loading}
+          className="border-neutral-700 bg-neutral-900 hover:bg-neutral-800"
+        >
+          Prev
+        </Button>
+        <span>
+          Page {page} of {totalPages}
+        </span>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          disabled={page >= totalPages || loading}
+          className="border-neutral-700 bg-neutral-900 hover:bg-neutral-800"
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 }

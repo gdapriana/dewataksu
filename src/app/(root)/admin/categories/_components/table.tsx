@@ -11,10 +11,12 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Eye, Pencil, Trash2, Loader2 } from "lucide-react";
+import { Eye, Pencil, Trash2, Loader2, Palmtree } from "lucide-react";
 import { CategoryRelation } from "@/utils/types";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
+import CustomTooltip from "@/app/(root)/_components/custom/custom-tooltip";
+import { formatNumber } from "@/utils/helpers";
 
 export default function CategoriesTable() {
   const [categories, setCategories] = useState<CategoryRelation[]>([]);
@@ -65,7 +67,7 @@ export default function CategoriesTable() {
   }, [fetchCategories]);
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full h-full flex flex-col justify-start items-stretch gap-4">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <h2 className="text-lg font-semibold">Categories</h2>
         <Input
@@ -75,21 +77,19 @@ export default function CategoriesTable() {
             setSearch(e.target.value);
             setPage(1);
           }}
-          className="w-full sm:w-64 bg-neutral-900 text-sm"
+          className="w-full sm:w-64 text-sm"
         />
       </div>
 
-      <div className="rounded-md overflow-hidden">
+      <div className="rounded-md no-scrollbar flex-1 overflow-auto">
         <Table>
           <TableHeader>
-            <TableRow className="">
+            <TableRow>
               <TableHead className="text-neutral-400">Cover</TableHead>
-              <TableHead className="text-neutral-400">Name</TableHead>
-              <TableHead className="text-neutral-400 flex-1">
-                Description
+              <TableHead className="text-neutral-400">
+                Name and Description
               </TableHead>
-              <TableHead className="text-neutral-400">Slug</TableHead>
-              <TableHead className="text-neutral-400">Destinations</TableHead>
+              <TableHead className="text-neutral-400">Statistic</TableHead>
               <TableHead className="text-right text-neutral-400">
                 Actions
               </TableHead>
@@ -114,10 +114,7 @@ export default function CategoriesTable() {
               </TableRow>
             ) : (
               categories.map((cat) => (
-                <TableRow
-                  key={cat.id}
-                  className="hover:bg-neutral-900 transition-colors"
-                >
+                <TableRow key={cat.id} className="transition-colors">
                   <TableCell>
                     {cat.cover?.url ? (
                       <Image
@@ -128,7 +125,7 @@ export default function CategoriesTable() {
                         className="w-20 aspect-video rounded-md object-cover"
                       />
                     ) : (
-                      <div className="w-20 aspect-video rounded-md bg-neutral-800 flex items-center justify-center text-xs text-neutral-500">
+                      <div className="w-20 aspect-video rounded-md bg-muted-foreground/5 flex items-center justify-center text-xs text-neutral-500">
                         {cat.name
                           .split(" ")
                           .map((w) => w[0])
@@ -138,32 +135,39 @@ export default function CategoriesTable() {
                       </div>
                     )}
                   </TableCell>
-                  <TableCell className="font-medium">{cat.name}</TableCell>
-                  <TableCell className="w-[300px] line-clamp-1 text-neutral-400">
-                    {cat.description ? (
-                      <p className="line-clamp-1 overflow-ellipsis">
+                  <TableCell>
+                    <CustomTooltip content={cat.name}>
+                      <p className="font-semibold line-clamp-2 overflow-ellipsis">
+                        {cat.name}
+                      </p>
+                    </CustomTooltip>
+                    <CustomTooltip content={cat.description}>
+                      <p className="line-clamp-1 max-w-[500px] text-muted-foreground overflow-ellipsis w-full">
                         {cat.description}
                       </p>
-                    ) : (
-                      <span className="italic">No Description Provided</span>
-                    )}
+                    </CustomTooltip>
                   </TableCell>
                   <TableCell className="text-neutral-400">
-                    <Badge variant="outline">{cat.slug}</Badge>
+                    <CustomTooltip
+                      content={`${cat._count.destinations} destinations`}
+                    >
+                      <Badge variant="secondary">
+                        <Palmtree /> {formatNumber(cat._count.destinations)}
+                      </Badge>
+                    </CustomTooltip>
                   </TableCell>
-                  <TableCell className="text-neutral-400">
-                    {cat._count?.destinations ?? 0}
-                  </TableCell>
-                  <TableCell className="flex justify-end gap-2">
-                    <Button variant="ghost" size="icon">
-                      <Eye className="w-4 h-4 text-neutral-300" />
-                    </Button>
-                    <Button variant="ghost" size="icon">
-                      <Pencil className="w-4 h-4 text-neutral-300" />
-                    </Button>
-                    <Button variant="ghost" size="icon">
-                      <Trash2 className="w-4 h-4 text-red-500" />
-                    </Button>
+                  <TableCell>
+                    <div className="flex justify-end items-center flex-wrap gap-1">
+                      <Button variant="ghost" size="icon">
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon">
+                        <Pencil className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon">
+                        <Trash2 className="w-4 h-4 text-red-500" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
@@ -172,7 +176,6 @@ export default function CategoriesTable() {
         </Table>
       </div>
 
-      {/* Pagination */}
       <div className="flex justify-between items-center text-sm text-neutral-400">
         <Button
           variant="outline"

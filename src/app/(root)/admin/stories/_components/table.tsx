@@ -1,42 +1,9 @@
 "use client";
-import { Input } from "@/components/ui/input";
-import {
-  CategoryRelation,
-  DestinationRelation,
-  DistrictRelation,
-} from "@/utils/types";
 
-import {
-  Table,
-  TableHeader,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-} from "@/components/ui/table";
-import { useCallback, useEffect, useState } from "react";
-import {
-  Bookmark,
-  Eye,
-  EyeOff,
-  Heart,
-  Layers,
-  Loader2,
-  Map,
-  MessageCircleMore,
-  Pencil,
-  Trash2,
-} from "lucide-react";
-import Image from "next/image";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import CustomTooltip from "@/app/(root)/_components/custom/custom-tooltip";
 import { Badge } from "@/components/ui/badge";
-import { formatNumber } from "@/utils/helpers";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -46,22 +13,36 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { formatNumber } from "@/utils/helpers";
+import { StoryRelation } from "@/utils/types";
+import {
+  Bookmark,
+  Eye,
+  EyeOff,
+  Heart,
+  Loader2,
+  MessageCircleMore,
+  Pencil,
+  Trash2,
+} from "lucide-react";
+import Image from "next/image";
+import { useCallback, useEffect, useState } from "react";
 
-export default function DestinationsTable({
-  districts,
-  categories,
-}: {
-  districts: DistrictRelation[];
-  categories: CategoryRelation[];
-}) {
-  const [destinations, setDestinations] = useState<DestinationRelation[]>([]);
+export default function StoriesTable() {
+  const [stories, setStories] = useState<StoryRelation[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [category, setCategory] = useState<string>("all");
-  const [district, setDistrict] = useState<string>("all");
   const [sort, setSort] = useState<string>("createdAt");
   const [order, setOrder] = useState<string>("desc");
 
@@ -70,7 +51,7 @@ export default function DestinationsTable({
     return () => clearTimeout(timer);
   }, [search]);
 
-  const fetchDestinations = useCallback(
+  const fetchStories = useCallback(
     async (controller: AbortController) => {
       try {
         setLoading(true);
@@ -82,18 +63,15 @@ export default function DestinationsTable({
           ...(debouncedSearch ? { search: debouncedSearch } : {}),
         };
 
-        if (category !== "all") params.category = category;
-        if (district !== "all") params.district = district;
-
         const query = new URLSearchParams(params);
 
-        const res = await fetch(`/api/destinations?${query.toString()}`, {
+        const res = await fetch(`/api/stories?${query.toString()}`, {
           signal: controller.signal,
         });
         const data = await res.json();
 
         if (data.success) {
-          setDestinations(data.result.destinations);
+          setStories(data.result.stories);
           setTotalPages(data.result.pagination.pages);
         }
       } catch (err) {
@@ -103,54 +81,22 @@ export default function DestinationsTable({
         setLoading(false);
       }
     },
-    [page, debouncedSearch, category, district, sort, order]
+    [page, debouncedSearch, sort, order]
   );
 
   useEffect(() => {
     const controller = new AbortController();
-    fetchDestinations(controller);
+    fetchStories(controller);
     return () => controller.abort();
-  }, [fetchDestinations]);
+  }, [fetchStories]);
+
+  console.log({ stories });
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full h-full flex flex-col justify-start items-stretch gap-4">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold">Destinations</h2>
+        <h2 className="text-lg font-semibold">Stories</h2>
         <div className="flex flex-1 gap-2 flex-wrap justify-end items-center">
-          <Select onValueChange={(e) => setCategory(e)}>
-            <SelectTrigger className="w-max">
-              <SelectValue placeholder="Category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Category</SelectLabel>
-                {categories &&
-                  categories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.slug}>
-                      {cat.name}
-                    </SelectItem>
-                  ))}
-                <SelectItem value="all">All</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <Select onValueChange={(e) => setDistrict(e)}>
-            <SelectTrigger className="w-max">
-              <SelectValue placeholder="District" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>District</SelectLabel>
-                {districts &&
-                  districts.map((dis) => (
-                    <SelectItem key={dis.id} value={dis.slug}>
-                      {dis.name}
-                    </SelectItem>
-                  ))}
-                <SelectItem value="all">All</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
           <Select onValueChange={(e) => setSort(e)}>
             <SelectTrigger className="w-max">
               <SelectValue placeholder="Sort By" />
@@ -160,7 +106,6 @@ export default function DestinationsTable({
                 <SelectLabel>Sort By</SelectLabel>
                 <SelectItem value="createdAt">Created At</SelectItem>
                 <SelectItem value="updatedAt">Updated At</SelectItem>
-                <SelectItem value="price">Price</SelectItem>
                 <SelectItem value="liked">Liked</SelectItem>
                 <SelectItem value="viewed">Viewed</SelectItem>
                 <SelectItem value="bookmarked">Bookmarked</SelectItem>
@@ -186,21 +131,20 @@ export default function DestinationsTable({
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="w-full sm:w-64 bg-neutral-900 text-sm"
+            className="w-full sm:w-64 text-sm"
           />
         </div>
       </div>
 
-      <div className="rounded-md overflow-hidden">
+      <div className="rounded-md no-scrollbar flex-1 overflow-auto">
         <Table>
           <TableHeader>
-            <TableRow className="">
+            <TableRow>
               <TableHead className="text-neutral-400">Cover</TableHead>
               <TableHead className="text-neutral-400 flex-1">
-                Name and Address
+                Name and Description
               </TableHead>
-              <TableHead className="text-neutral-400">Category</TableHead>
-              <TableHead className="text-neutral-400">District</TableHead>
+              <TableHead className="text-neutral-400">User</TableHead>
               <TableHead className="text-neutral-400">Status</TableHead>
               <TableHead className="text-neutral-400">Statistic</TableHead>
               <TableHead className="text-right text-neutral-400">
@@ -216,33 +160,32 @@ export default function DestinationsTable({
                   <Loader2 className="animate-spin inline w-5 h-5 text-gray-400" />
                 </TableCell>
               </TableRow>
-            ) : categories.length === 0 ? (
+            ) : stories.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={6}
                   className="text-center py-6 text-neutral-400"
                 >
-                  No destinations found.
+                  No stories found.
                 </TableCell>
               </TableRow>
             ) : (
-              destinations.map((des) => (
-                <TableRow
-                  key={des.id}
-                  className="hover:bg-neutral-900 transition-colors"
-                >
+              stories.map((sto) => (
+                <TableRow key={sto.id} className="transition-colors">
                   <TableCell>
-                    {des.cover?.url ? (
+                    {sto.cover?.url ? (
                       <Image
                         loading="lazy"
                         quality={10}
-                        src={des.cover.url}
-                        alt={des.name}
+                        width={100}
+                        height={100}
+                        src={sto.cover.url}
+                        alt={sto.name}
                         className="w-20 aspect-video rounded-md object-cover"
                       />
                     ) : (
-                      <div className="w-20 aspect-video rounded-md bg-neutral-800 flex items-center justify-center text-xs text-neutral-500">
-                        {des.name
+                      <div className="w-20 aspect-video bg-muted-foreground/5 rounded-md flex items-center justify-center text-xs text-neutral-500">
+                        {sto.name
                           .split(" ")
                           .map((w) => w[0])
                           .slice(0, 2)
@@ -251,32 +194,30 @@ export default function DestinationsTable({
                       </div>
                     )}
                   </TableCell>
-                  <TableCell className="flex w-[300px] flex-col justify-center items-start">
-                    <CustomTooltip content={des.name}>
+                  <TableCell>
+                    <CustomTooltip content={sto.name}>
                       <p className="font-semibold line-clamp-2 overflow-ellipsis">
-                        {des.name}
+                        {sto.name}
                       </p>
                     </CustomTooltip>
-                    <CustomTooltip content={des.content}>
-                      <p className="line-clamp-1 text-muted-foreground overflow-ellipsis w-full">
-                        {des.content}
+                    <CustomTooltip content={sto.description}>
+                      <p className="line-clamp-1 max-w-[200px] text-muted-foreground overflow-ellipsis w-full">
+                        {sto.description}
                       </p>
                     </CustomTooltip>
                   </TableCell>
                   <TableCell>
-                    <Badge variant="outline">
-                      <Layers />
-                      {des.category.name}
-                    </Badge>
+                    <CustomTooltip content="Author name">
+                      <p className="font-semibold line-clamp-2 overflow-ellipsis">
+                        {sto.author.name}
+                      </p>
+                    </CustomTooltip>
+                    <CustomTooltip content="Author email">
+                      <p>{sto.author.email}</p>
+                    </CustomTooltip>
                   </TableCell>
                   <TableCell>
-                    <Badge variant="outline">
-                      <Map />
-                      {des.district.name}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {des.isPublished ? (
+                    {sto.isPublished ? (
                       <CustomTooltip content="Published">
                         <Badge className="bg-teal-500">
                           <Eye />
@@ -292,50 +233,51 @@ export default function DestinationsTable({
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-1 flex-wrap justify-start items-center">
-                      <CustomTooltip content={`${des._count.likes} likes`}>
+                      <CustomTooltip content={`${sto._count.likes} likes`}>
                         <Badge variant="secondary">
-                          <Heart /> {des._count.likes}
+                          <Heart /> {sto._count.likes}
                         </Badge>
                       </CustomTooltip>
                       <CustomTooltip
-                        content={`${des._count.bookmarks} bookmarks`}
+                        content={`${sto._count.bookmarks} bookmarks`}
                       >
                         <Badge variant="secondary">
-                          <Bookmark /> {formatNumber(des._count.bookmarks)}
+                          <Bookmark /> {formatNumber(sto._count.bookmarks)}
                         </Badge>
                       </CustomTooltip>
-                      <CustomTooltip content={`${des._count.views} views`}>
+                      <CustomTooltip content={`${sto._count.views} views`}>
                         <Badge variant="secondary">
-                          <Eye /> {formatNumber(des._count.views)}
+                          <Eye /> {formatNumber(sto._count.views)}
                         </Badge>
                       </CustomTooltip>
                       <CustomTooltip
-                        content={`${des._count.comments} comments`}
+                        content={`${sto._count.comments} comments`}
                       >
                         <Badge variant="secondary">
                           <MessageCircleMore />{" "}
-                          {formatNumber(des._count.comments)}
+                          {formatNumber(sto._count.comments)}
                         </Badge>
                       </CustomTooltip>
                     </div>
                   </TableCell>
-
-                  <TableCell className="flex justify-end gap-2">
-                    <CustomTooltip content="View">
-                      <Button variant="ghost" size="icon">
-                        <Eye className="w-4 h-4 text-neutral-300" />
-                      </Button>
-                    </CustomTooltip>
-                    <CustomTooltip content="Edit">
-                      <Button variant="ghost" size="icon">
-                        <Pencil className="w-4 h-4 text-neutral-300" />
-                      </Button>
-                    </CustomTooltip>
-                    <CustomTooltip content="Delete">
-                      <Button variant="ghost" size="icon">
-                        <Trash2 className="w-4 h-4 text-red-500" />
-                      </Button>
-                    </CustomTooltip>
+                  <TableCell>
+                    <div className="flex justify-end items-center flex-wrap gap-1">
+                      <CustomTooltip content="View">
+                        <Button variant="ghost" size="icon">
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                      </CustomTooltip>
+                      <CustomTooltip content="Edit">
+                        <Button variant="ghost" size="icon">
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                      </CustomTooltip>
+                      <CustomTooltip content="Delete">
+                        <Button variant="ghost" size="icon">
+                          <Trash2 className="w-4 h-4 text-red-500" />
+                        </Button>
+                      </CustomTooltip>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

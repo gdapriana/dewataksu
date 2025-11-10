@@ -1,17 +1,15 @@
-import CategoriesTable from "@/app/(root)/admin/categories/_components/table";
+import DistrictsTable from "@/app/(root)/admin/districts/_components/table";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
 } from "@/components/ui/breadcrumb";
-import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-
+import { Separator } from "@radix-ui/react-separator";
 const pageInfo = {
-  name: "Categories",
+  name: "Districts",
 };
-
 export default async function Page() {
   return (
     <main className="flex flex-col justify-start items-stretch h-dvh">
@@ -32,7 +30,7 @@ export default async function Page() {
         </div>
       </header>
       <div className="flex h-[90%] flex-1 justify-start items-stretch flex-col gap-4 p-4 pt-0">
-        <CategoriesTable />
+        <DistrictsTable />
       </div>
     </main>
   );

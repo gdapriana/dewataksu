@@ -1,11 +1,6 @@
 "use client";
 import { Input } from "@/components/ui/input";
-import {
-  CategoryRelation,
-  DestinationRelation,
-  DistrictRelation,
-  TraditionRelation,
-} from "@/utils/types";
+import { DistrictRelation, TraditionRelation } from "@/utils/types";
 
 import {
   Table,
@@ -63,7 +58,7 @@ export default function TraditionsTable({
     return () => clearTimeout(timer);
   }, [search]);
 
-  const fetchDestinations = useCallback(
+  const fetchTraditions = useCallback(
     async (controller: AbortController) => {
       try {
         setLoading(true);
@@ -100,14 +95,14 @@ export default function TraditionsTable({
 
   useEffect(() => {
     const controller = new AbortController();
-    fetchDestinations(controller);
+    fetchTraditions(controller);
     return () => controller.abort();
-  }, [fetchDestinations]);
+  }, [fetchTraditions]);
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full h-full flex flex-col justify-start items-stretch gap-4">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold">Destinations</h2>
+        <h2 className="text-lg font-semibold">Traditions</h2>
         <div className="flex flex-1 gap-2 flex-wrap justify-end items-center">
           <Select onValueChange={(e) => setDistrict(e)}>
             <SelectTrigger className="w-max">
@@ -160,19 +155,17 @@ export default function TraditionsTable({
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="w-full sm:w-64 bg-neutral-900 text-sm"
+            className="w-full sm:w-64 text-sm"
           />
         </div>
       </div>
 
-      <div className="rounded-md overflow-hidden">
+      <div className="rounded-md no-scrollbar flex-1 overflow-auto">
         <Table>
           <TableHeader>
             <TableRow className="">
               <TableHead className="text-neutral-400">Cover</TableHead>
-              <TableHead className="text-neutral-400 flex-1">
-                Name and Address
-              </TableHead>
+              <TableHead className="text-neutral-400 flex-1">Name</TableHead>
               <TableHead className="text-neutral-400">District</TableHead>
               <TableHead className="text-neutral-400">Status</TableHead>
               <TableHead className="text-neutral-400">Statistic</TableHead>
@@ -195,26 +188,25 @@ export default function TraditionsTable({
                   colSpan={6}
                   className="text-center py-6 text-neutral-400"
                 >
-                  No destinations found.
+                  No traditions found.
                 </TableCell>
               </TableRow>
             ) : (
               traditions.map((tra) => (
-                <TableRow
-                  key={tra.id}
-                  className="hover:bg-neutral-900 transition-colors"
-                >
+                <TableRow key={tra.id} className="transition-colors">
                   <TableCell>
                     {tra.cover?.url ? (
                       <Image
                         loading="lazy"
                         quality={10}
+                        width={100}
+                        height={100}
                         src={tra.cover.url}
                         alt={tra.name}
                         className="w-20 aspect-video rounded-md object-cover"
                       />
                     ) : (
-                      <div className="w-20 aspect-video rounded-md bg-neutral-800 flex items-center justify-center text-xs text-neutral-500">
+                      <div className="w-20 aspect-video rounded-md bg-muted-foreground/5 flex items-center justify-center text-xs text-neutral-500">
                         {tra.name
                           .split(" ")
                           .map((w) => w[0])
@@ -224,17 +216,23 @@ export default function TraditionsTable({
                       </div>
                     )}
                   </TableCell>
-                  <TableCell className="flex w-[300px] flex-col justify-center items-start">
+                  <TableCell>
                     <CustomTooltip content={tra.name}>
                       <p className="font-semibold line-clamp-2 overflow-ellipsis">
                         {tra.name}
                       </p>
                     </CustomTooltip>
-                    <CustomTooltip content={tra.description}>
-                      <p className="line-clamp-1 text-muted-foreground overflow-ellipsis w-full">
-                        {tra.description}
-                      </p>
-                    </CustomTooltip>
+                    {tra.description ? (
+                      <CustomTooltip content={tra.description}>
+                        <p className="line-clamp-1 max-w-[200px] text-muted-foreground overflow-ellipsis w-full">
+                          {tra.description}
+                        </p>
+                      </CustomTooltip>
+                    ) : (
+                      <span className="text-muted-foreground italic text-sm">
+                        Description not set
+                      </span>
+                    )}
                   </TableCell>
                   <TableCell>
                     {tra.district ? (
@@ -293,22 +291,24 @@ export default function TraditionsTable({
                     </div>
                   </TableCell>
 
-                  <TableCell className="flex justify-end gap-2">
-                    <CustomTooltip content="View">
-                      <Button variant="ghost" size="icon">
-                        <Eye className="w-4 h-4 text-neutral-300" />
-                      </Button>
-                    </CustomTooltip>
-                    <CustomTooltip content="Edit">
-                      <Button variant="ghost" size="icon">
-                        <Pencil className="w-4 h-4 text-neutral-300" />
-                      </Button>
-                    </CustomTooltip>
-                    <CustomTooltip content="Delete">
-                      <Button variant="ghost" size="icon">
-                        <Trash2 className="w-4 h-4 text-red-500" />
-                      </Button>
-                    </CustomTooltip>
+                  <TableCell>
+                    <div className="flex justify-end items-center flex-wrap gap-1">
+                      <CustomTooltip content="View">
+                        <Button variant="ghost" size="icon">
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                      </CustomTooltip>
+                      <CustomTooltip content="Edit">
+                        <Button variant="ghost" size="icon">
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                      </CustomTooltip>
+                      <CustomTooltip content="Delete">
+                        <Button variant="ghost" size="icon">
+                          <Trash2 className="w-4 h-4 text-red-500" />
+                        </Button>
+                      </CustomTooltip>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

@@ -15,7 +15,7 @@ export default function CustomTooltip({
   return (
     <Tooltip>
       <TooltipTrigger asChild>{children}</TooltipTrigger>
-      <TooltipContent>{content}</TooltipContent>
+      <TooltipContent className="max-w-[400px]">{content}</TooltipContent>
     </Tooltip>
   );
 }

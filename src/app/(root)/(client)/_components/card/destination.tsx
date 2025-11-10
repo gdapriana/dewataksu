@@ -51,10 +51,10 @@ export function DestinationCard({ item }: { item: DestinationRelation }) {
         ) : (
           <Image
             priority={false}
-            width={800}
+            width={200}
             loading="lazy"
             quality={25}
-            height={350}
+            height={100}
             className="w-full aspect-video rounded-xl z-[1] h-full object-cover"
             src={item.cover.url}
             alt={item.name}

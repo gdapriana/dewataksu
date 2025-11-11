@@ -17,6 +17,7 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import CustomTooltip from "@/app/(root)/_components/custom/custom-tooltip";
 import { formatNumber } from "@/utils/helpers";
+import Link from "next/link";
 
 export default function CategoriesTable() {
   const [categories, setCategories] = useState<CategoryRelation[]>([]);
@@ -119,6 +120,8 @@ export default function CategoriesTable() {
                     {cat.cover?.url ? (
                       <Image
                         loading="lazy"
+                        width={100}
+                        height={50}
                         quality={10}
                         src={cat.cover.url}
                         alt={cat.name}
@@ -158,11 +161,15 @@ export default function CategoriesTable() {
                   </TableCell>
                   <TableCell>
                     <div className="flex justify-end items-center flex-wrap gap-1">
-                      <Button variant="ghost" size="icon">
-                        <Eye className="w-4 h-4" />
+                      <Button asChild variant="ghost" size="icon">
+                        <Link href={`/destinations?category=${cat.slug}`}>
+                          <Eye className="w-4 h-4" />
+                        </Link>
                       </Button>
-                      <Button variant="ghost" size="icon">
-                        <Pencil className="w-4 h-4" />
+                      <Button asChild variant="ghost" size="icon">
+                        <Link href={`/admin/categories/${cat.id}`}>
+                          <Pencil className="w-4 h-4" />
+                        </Link>
                       </Button>
                       <Button variant="ghost" size="icon">
                         <Trash2 className="w-4 h-4 text-red-500" />

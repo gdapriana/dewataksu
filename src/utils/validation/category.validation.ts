@@ -1,6 +1,7 @@
 import z from "zod";
 
 export class CategoryValidations {
+  static readonly GET = z.string();
   static readonly QUERY = z.object({
     search: z.string().optional(),
     page: z
@@ -27,12 +28,8 @@ export class CategoryValidations {
       .min(2, { message: "Name must be at least 2 characters long." })
       .max(100, { message: "Name cannot exceed 100 characters." })
       .trim(),
-    description: z
-      .string()
-      .min(10, { message: "Description must be at least 10 characters." })
-      .max(400, { message: "Description cannot exceed 400 characters." })
-      .trim()
-      .optional(),
+    description: z.string().min(10).trim(),
+    coverId: z.string().trim().cuid("Invalid coverId format").optional(),
   });
   static readonly PATCH = z.object({
     name: z
@@ -41,11 +38,11 @@ export class CategoryValidations {
       .max(100, { message: "Name cannot exceed 100 characters." })
       .trim()
       .optional(),
-    description: z
+    description: z.string().min(10).optional(),
+    coverId: z
       .string()
-      .min(10, { message: "Description must be at least 10 characters." })
-      .max(400, { message: "Description cannot exceed 400 characters." })
       .trim()
+      .cuid("Invalid coverId format")
       .nullable()
       .optional(),
   });

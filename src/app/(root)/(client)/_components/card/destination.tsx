@@ -130,9 +130,9 @@ export function DestinationMiniCard({
         <div className="w-[100px] rounded-lg overflow-hidden flex justify-center items-center">
           {item.cover?.url ? (
             <Image
-              width={300}
+              width={100}
               loading="lazy"
-              height={169}
+              height={50}
               alt={item.name}
               src={item.cover.url}
               quality={25}

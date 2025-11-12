@@ -96,9 +96,14 @@ export async function DELETE(
     const valdatedBody = validateRequest(validation.DELETE, id);
     const checkItem = await table.findUnique({
       where: { id: valdatedBody },
-      select: { id: true },
+      select: { id: true, _count: { select: { destinations: true } } },
     });
     if (!checkItem) return ErrorResponseMessage.NOT_FOUND("CATEGORY");
+    if (checkItem._count.destinations !== 0) {
+      return ErrorResponseMessage.BAD_REQUEST(
+        "Delete related destinations first"
+      );
+    }
     const deleted = await table.delete({
       where: { id },
       select: {

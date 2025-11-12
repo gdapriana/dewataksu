@@ -42,10 +42,7 @@ export class ErrorResponseMessage {
     );
   }
   static BAD_REQUEST(reason: string) {
-    return NextResponse.json(
-      { errors: `bad request: ${reason}` },
-      { status: 401 }
-    );
+    return NextResponse.json({ errors: `${reason}` }, { status: 401 });
   }
 
   static UNAUTHORIZED(

@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import CustomTooltip from "@/app/(root)/_components/custom/custom-tooltip";
 import { formatNumber } from "@/utils/helpers";
 import Link from "next/link";
+import DeleteCategoryAlert from "@/app/(root)/_components/alert/delete/category";
 
 export default function CategoriesTable() {
   const [categories, setCategories] = useState<CategoryRelation[]>([]);
@@ -171,9 +172,7 @@ export default function CategoriesTable() {
                           <Pencil className="w-4 h-4" />
                         </Link>
                       </Button>
-                      <Button variant="ghost" size="icon">
-                        <Trash2 className="w-4 h-4 text-red-500" />
-                      </Button>
+                      <DeleteCategoryAlert item={cat} />
                     </div>
                   </TableCell>
                 </TableRow>

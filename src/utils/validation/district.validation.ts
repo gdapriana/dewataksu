@@ -28,12 +28,7 @@ export class DistrictValidations {
       .min(2, { message: "Name must be at least 2 characters long." })
       .max(100, { message: "Name cannot exceed 100 characters." })
       .trim(),
-    description: z
-      .string()
-      .min(10, { message: "Description must be at least 10 characters." })
-      .max(400, { message: "Description cannot exceed 400 characters." })
-      .trim()
-      .optional(),
+    description: z.string().min(10).trim(),
     coverId: z.string().trim().cuid("Invalid coverId format").optional(),
   });
   static readonly PATCH = z.object({
@@ -43,13 +38,7 @@ export class DistrictValidations {
       .max(100, { message: "Name cannot exceed 100 characters." })
       .trim()
       .optional(),
-    description: z
-      .string()
-      .min(10, { message: "Description must be at least 10 characters." })
-      .max(2000, { message: "Description cannot exceed 2000 characters." })
-      .trim()
-      .nullable()
-      .optional(),
+    description: z.string().min(10).optional(),
     coverId: z
       .string()
       .trim()

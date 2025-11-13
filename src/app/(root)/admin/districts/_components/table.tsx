@@ -38,6 +38,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import DeleteDistrictAlert from "@/app/(root)/_components/alert/delete/district";
+import Link from "next/link";
 
 export default function DistrictsTable() {
   const [districts, setDistricts] = useState<DistrictRelation[]>([]);
@@ -106,7 +108,7 @@ export default function DistrictsTable() {
                 <SelectLabel>Sort By</SelectLabel>
                 <SelectItem value="createdAt">Created At</SelectItem>
                 <SelectItem value="updatedAt">Updated At</SelectItem>
-                <SelectItem value="bookmarked">Popular</SelectItem>
+                <SelectItem value="popular">Popular</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -123,7 +125,7 @@ export default function DistrictsTable() {
             </SelectContent>
           </Select>
           <Input
-            placeholder="Search traditions..."
+            placeholder="Search District..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -203,7 +205,7 @@ export default function DistrictsTable() {
                     </CustomTooltip>
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-1 flex-wrap justify-start items-center">
+                    <div className="flex gap-1 flex-nowrap justify-start items-center">
                       <CustomTooltip
                         content={`${dis._count.destinations} destinations`}
                       >
@@ -222,21 +224,21 @@ export default function DistrictsTable() {
                   </TableCell>
 
                   <TableCell>
-                    <div className="flex justify-end items-center flex-wrap gap-1">
+                    <div className="flex justify-end items-center flex-nowrap gap-1">
                       <CustomTooltip content="View">
                         <Button variant="ghost" size="icon">
                           <Eye className="w-4 h-4" />
                         </Button>
                       </CustomTooltip>
                       <CustomTooltip content="Edit">
-                        <Button variant="ghost" size="icon">
-                          <Pencil className="w-4 h-4 " />
+                        <Button asChild variant="ghost" size="icon">
+                          <Link href={`/admin/districts/${dis.id}`}>
+                            <Pencil className="w-4 h-4 " />
+                          </Link>
                         </Button>
                       </CustomTooltip>
                       <CustomTooltip content="Delete">
-                        <Button variant="ghost" size="icon">
-                          <Trash2 className="w-4 h-4 text-red-500" />
-                        </Button>
+                        <DeleteDistrictAlert item={dis} />
                       </CustomTooltip>
                     </div>
                   </TableCell>

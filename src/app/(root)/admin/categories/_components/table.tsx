@@ -161,7 +161,7 @@ export default function CategoriesTable() {
                     </CustomTooltip>
                   </TableCell>
                   <TableCell>
-                    <div className="flex justify-end items-center flex-wrap gap-1">
+                    <div className="flex flex-nowrap justify-end items-center gap-1">
                       <Button asChild variant="ghost" size="icon">
                         <Link href={`/destinations?category=${cat.slug}`}>
                           <Eye className="w-4 h-4" />

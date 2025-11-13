@@ -24,7 +24,7 @@ export default async function Page({
     success: boolean;
     result: DistrictRelation;
     message: string;
-  } = await DistrictRequests.GET(slug);
+  } = await DistrictRequests.GETSlug(slug);
 
   if (!district) return notFound();
   if (district && !district.success) return notFound();

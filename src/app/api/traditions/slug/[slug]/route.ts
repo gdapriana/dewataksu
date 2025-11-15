@@ -3,14 +3,12 @@ import { apiSuccessResponse, ErrorResponseMessage } from "@/utils/api-response";
 import { TraditionResponses } from "@/utils/response/tradition.response";
 import { TraditionValidations } from "@/utils/validation/tradition.validation";
 import { validateRequest } from "@/utils/validation/validate";
-import { Schema } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
 
 const response = TraditionResponses;
 const table = prisma.tradition;
 const validation = TraditionValidations;
-const schema: Schema = "TRADITION";
 
 export async function GET(
   req: NextRequest,
@@ -21,7 +19,7 @@ export async function GET(
     const validatedSlug = validateRequest(validation.GET, slug);
 
     const item = await table.findUnique({
-      where: { slug },
+      where: { slug: validatedSlug },
       select: response.GET,
     });
 

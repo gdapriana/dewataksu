@@ -37,6 +37,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Link from "next/link";
 
 export default function TraditionsTable({
   districts,
@@ -299,8 +300,10 @@ export default function TraditionsTable({
                         </Button>
                       </CustomTooltip>
                       <CustomTooltip content="Edit">
-                        <Button variant="ghost" size="icon">
-                          <Pencil className="w-4 h-4" />
+                        <Button asChild variant="ghost" size="icon">
+                          <Link href={`/admin/traditions/${tra.id}`}>
+                            <Pencil className="w-4 h-4" />
+                          </Link>
                         </Button>
                       </CustomTooltip>
                       <CustomTooltip content="Delete">

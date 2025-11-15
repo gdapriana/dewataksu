@@ -5,6 +5,7 @@ export class TraditionResponses {
     id: true,
     name: true,
     description: true,
+    districtId: true,
     slug: true,
     address: true,
     _count: true,

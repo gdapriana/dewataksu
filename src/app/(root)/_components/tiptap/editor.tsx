@@ -350,7 +350,7 @@ export default function TiptapEditor({
 
   return (
     <div className="w-full h-full mx-auto">
-      <div className="border rounded-lg overflow-hidden shadow-sm">
+      <div className="border h-full rounded-lg overflow-hidden shadow-sm">
         <MenuBar editor={editor} />
         <EditorContent
           editor={editor}

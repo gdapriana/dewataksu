@@ -1,8 +1,19 @@
 export class TraditionRequests {
-  static async GET(slug: string) {
+  static async GETId(id: string) {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BETTER_AUTH_URL}/api/traditions/${slug}`
+        `${process.env.NEXT_PUBLIC_BETTER_AUTH_URL}/api/traditions/id/${id}`
+      );
+      const data = await response.json();
+      return data;
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  static async GETSlug(slug: string) {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BETTER_AUTH_URL}/api/traditions/slug/${slug}`
       );
       const data = await response.json();
       return data;

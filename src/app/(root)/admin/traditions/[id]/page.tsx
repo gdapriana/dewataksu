@@ -9,9 +9,12 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { notFound } from "next/navigation";
 import { DistrictRequests } from "@/utils/request/district.request";
 import DistrictForm from "@/app/(root)/admin/districts/_components/form";
+import { TraditionRequests } from "@/utils/request/tradition.request";
+import TraditionForm from "@/app/(root)/admin/traditions/_components/form";
+import { DistrictRelation, Pagination } from "@/utils/types";
 
 const pageInfo = {
-  name: "Districts",
+  name: "Traditions",
 };
 
 export default async function Page({
@@ -20,10 +23,16 @@ export default async function Page({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const district = await DistrictRequests.GETId(id);
+  const tradition = await TraditionRequests.GETId(id);
 
-  if (!district) return notFound();
-  if (district && !district.success) return notFound();
+  if (!tradition) return notFound();
+  if (tradition && !tradition.success) return notFound();
+
+  const districts: {
+    success: boolean;
+    result: { districts: DistrictRelation[]; pagination: Pagination };
+    message: string;
+  } = await DistrictRequests.GETs("sortBy=popular");
 
   return (
     <main className="flex flex-col justify-start items-stretch h-dvh">
@@ -44,7 +53,11 @@ export default async function Page({
         </div>
       </header>
       <div className="flex h-[90%] flex-1 justify-start items-stretch flex-col gap-4 p-4 pt-0">
-        <DistrictForm mode="patch" currentDistrict={district.result} />
+        <TraditionForm
+          districts={districts.result.districts}
+          mode="patch"
+          currentTradition={tradition.result}
+        />
       </div>
     </main>
   );

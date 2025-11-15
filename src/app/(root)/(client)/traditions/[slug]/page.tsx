@@ -27,7 +27,7 @@ export default async function Page({
     success: boolean;
     result: TraditionRelation;
     message: string;
-  } = await TraditionRequests.GET(slug);
+  } = await TraditionRequests.GETSlug(slug);
 
   if (!tradition) return notFound();
   if (tradition && !tradition.success) return notFound();

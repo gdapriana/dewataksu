@@ -26,14 +26,20 @@ export class TraditionValidations {
   });
   static readonly POST = z.object({
     name: z.string().min(2).max(400).trim(),
+    description: z.string().min(10).optional(),
+    address: z.string().max(1000).trim().nullable().optional(),
     content: z.string().min(10).max(1000000).trim(),
+    districtId: z.string().cuid().nullable().optional(),
     coverId: z.string().cuid().nullable().optional(),
     isPublished: z.boolean().optional(),
   });
   static readonly PATCH = z.object({
     name: z.string().min(2).max(400).trim().optional(),
+    description: z.string().min(10).optional(),
+    address: z.string().max(1000).trim().nullable().optional(),
     content: z.string().min(10).max(1000000).trim().optional(),
-    coverId: z.string().cuid().nullable().optional(),
+    districtId: z.string().cuid().nullable().optional(),
+    coverId: z.string().nullable().optional(),
     isPublished: z.boolean().optional(),
   });
   static readonly DELETE = z.string().cuid();

@@ -38,6 +38,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Link from "next/link";
+import DeleteTraditionAlert from "@/app/(root)/_components/alert/delete/tradition";
 
 export default function TraditionsTable({
   districts,
@@ -263,7 +264,7 @@ export default function TraditionsTable({
                     )}
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-1 flex-wrap justify-start items-center">
+                    <div className="flex gap-1 justify-start items-center">
                       <CustomTooltip content={`${tra._count.likes} likes`}>
                         <Badge variant="secondary">
                           <Heart /> {tra._count.likes}
@@ -293,7 +294,7 @@ export default function TraditionsTable({
                   </TableCell>
 
                   <TableCell>
-                    <div className="flex justify-end items-center flex-wrap gap-1">
+                    <div className="flex justify-end items-center gap-1">
                       <CustomTooltip content="View">
                         <Button variant="ghost" size="icon">
                           <Eye className="w-4 h-4" />
@@ -307,9 +308,7 @@ export default function TraditionsTable({
                         </Button>
                       </CustomTooltip>
                       <CustomTooltip content="Delete">
-                        <Button variant="ghost" size="icon">
-                          <Trash2 className="w-4 h-4 text-red-500" />
-                        </Button>
+                        <DeleteTraditionAlert item={tra} />
                       </CustomTooltip>
                     </div>
                   </TableCell>

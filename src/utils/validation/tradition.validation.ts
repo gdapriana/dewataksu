@@ -29,8 +29,8 @@ export class TraditionValidations {
     description: z.string().min(10).optional(),
     address: z.string().max(1000).trim().nullable().optional(),
     content: z.string().min(10).max(1000000).trim(),
-    districtId: z.string().cuid().nullable().optional(),
-    coverId: z.string().cuid().nullable().optional(),
+    districtId: z.string().nullable().optional(),
+    coverId: z.string().nullable().optional(),
     isPublished: z.boolean().optional(),
   });
   static readonly PATCH = z.object({
@@ -38,7 +38,7 @@ export class TraditionValidations {
     description: z.string().min(10).optional(),
     address: z.string().max(1000).trim().nullable().optional(),
     content: z.string().min(10).max(1000000).trim().optional(),
-    districtId: z.string().cuid().nullable().optional(),
+    districtId: z.string().nullable().optional(),
     coverId: z.string().nullable().optional(),
     isPublished: z.boolean().optional(),
   });

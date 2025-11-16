@@ -40,6 +40,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { ImageRequests } from "@/utils/request/image.request";
+import { DistrictRequests } from "@/utils/request/district.request";
+import { TraditionRequests } from "@/utils/request/tradition.request";
 
 export default function TraditionForm({
   districts,
@@ -53,39 +58,29 @@ export default function TraditionForm({
   const [loading, setLoading] = useState<boolean>(false);
   const [coverPreview, setCoverPreview] = useState<string | null>();
   const [selectedFile, setSelectedFile] = useState<File>();
-  const [selectedDistrictId, setSelectedDistrictId] = useState<string | null>(
-    ""
-  );
-
+  const [selectedDistrictId, setSelectedDistrictId] = useState<string | null>();
   const router = useRouter();
 
-  const formSchema =
-    mode === "post" ? TraditionValidations.POST : TraditionValidations.PATCH;
+  type PostFormValues = z.infer<typeof TraditionValidations.POST>;
+  type PatchFormValues = z.infer<typeof TraditionValidations.PATCH>;
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<PostFormValues | PatchFormValues>({
+    resolver: zodResolver(
+      mode === "post" ? TraditionValidations.POST : TraditionValidations.PATCH
+    ),
     defaultValues: {
-      name: "",
-      description: "",
-      address: null,
-      content: "",
-      isPublished: false,
-      coverId: undefined,
-      districtId: undefined,
+      name: currentTradition?.name || "",
+      description: currentTradition?.description || "",
+      address: currentTradition?.address || undefined,
+      content: currentTradition?.content || "",
+      districtId: currentTradition?.districtId || "",
+      coverId: currentTradition?.coverId || undefined,
+      isPublished: currentTradition?.isPublished || false,
     },
   });
 
   useEffect(() => {
     if (currentTradition) {
-      form.reset({
-        name: currentTradition.name,
-        description: currentTradition.description || "",
-        content: currentTradition.content,
-        address: currentTradition.address,
-        isPublished: currentTradition.isPublished,
-        districtId: currentTradition.districtId || undefined,
-        coverId: currentTradition.coverId || undefined,
-      });
       setSelectedDistrictId(currentTradition.districtId);
       setCoverPreview(currentTradition.cover?.url);
     }
@@ -99,18 +94,97 @@ export default function TraditionForm({
   };
 
   const handleDeleteFile = () => {
+    if (loading) return;
     setCoverPreview(null);
     setSelectedFile(undefined);
   };
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log({ values });
+  async function onSubmit(values: PostFormValues | PatchFormValues) {
+    if (mode === "patch" && currentTradition?.name === values.name)
+      values.name = undefined;
+    setLoading(true);
+    if (mode === "post") {
+      toast.promise(
+        (async () => {
+          if (selectedFile) {
+            const cover = await ImageRequests.POST(selectedFile);
+            const res = await TraditionRequests.POST({
+              ...values,
+              coverId: cover.result.id,
+            });
+            if (res.errors)
+              throw new Error(res.errors || "invalid credentials");
+            return res;
+          } else {
+            const res = await TraditionRequests.POST({
+              ...values,
+              coverId: undefined,
+            });
+            if (res.errors)
+              throw new Error(res.errors || "invalid credentials");
+            return res;
+          }
+        })(),
+        {
+          loading: "Posting...",
+          success: () => {
+            router.push("/admin/traditions");
+            return "Success!";
+          },
+          error: (err) => err.message,
+          finally: () => {
+            setLoading(false);
+          },
+        }
+      );
+    } else {
+      toast.promise(
+        (async () => {
+          if (selectedFile) {
+            const cover = await ImageRequests.POST(selectedFile);
+            const res = await TraditionRequests.PATCH(
+              {
+                ...values,
+                coverId: cover.result.id,
+              },
+              currentTradition?.id
+            );
+            if (res.errors)
+              throw new Error(res.errors || "invalid credentials");
+            return res;
+          } else {
+            const res = await TraditionRequests.PATCH(
+              {
+                ...values,
+                coverId: coverPreview === null ? null : undefined,
+              },
+              currentTradition?.id
+            );
+
+            if (res.errors)
+              throw new Error(res.errors || "invalid credentials");
+            return res;
+          }
+        })(),
+        {
+          loading: "Updating..",
+          success: () => {
+            router.push("/admin/traditions");
+            return "Success!";
+          },
+          error: (err) => err.message,
+          finally: () => {
+            setLoading(false);
+          },
+        }
+      );
+    }
   }
 
   return (
     <Form {...form}>
       <form
-        className="flex flex-col gap-8 justify-start items-stretch"
+        className="flex pb-12 flex-col gap-8 justify-start items-stretch"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <div className="flex w-full flex-col justify-start items-stretch md:flex-row gap-4">
@@ -145,8 +219,8 @@ export default function TraditionForm({
                     onValueChange={(value) =>
                       field.onChange(value === "none" ? undefined : value)
                     }
-                    value={field.value || selectedDistrictId || "none"}
                     disabled={loading}
+                    defaultValue={field.value || "none"}
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
@@ -156,12 +230,7 @@ export default function TraditionForm({
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Available</SelectLabel>
-                        <SelectItem
-                          value="none"
-                          className="text-muted-foreground"
-                        >
-                          Not set {field.value}
-                        </SelectItem>
+                        <SelectItem value="none">None</SelectItem>
                         {districts.map((district) => (
                           <SelectItem key={district.id} value={district.id}>
                             {district.name}
@@ -228,6 +297,7 @@ export default function TraditionForm({
                     <Button
                       onClick={handleDeleteFile}
                       variant="destructive"
+                      disabled={loading}
                       className="absolute right-4 bottom-4 cursor-pointer"
                     >
                       <Trash />
@@ -250,6 +320,7 @@ export default function TraditionForm({
               <div className="grid w-full items-center gap-3">
                 <Label htmlFor="picture">Picture</Label>
                 <Input
+                  disabled={loading}
                   accept="image/*"
                   id="picture"
                   type="file"
@@ -287,7 +358,12 @@ export default function TraditionForm({
               control={form.control}
               name="content"
               render={({ field }) => (
-                <FormItem className="h-full flex flex-col gap-2">
+                <FormItem
+                  className={cn(
+                    "h-full flex flex-col gap-2",
+                    loading && "pointer-events-none opacity-50"
+                  )}
+                >
                   <FormLabel>Content</FormLabel>
                   <FormControl className="h-full">
                     <TiptapEditor
@@ -303,11 +379,16 @@ export default function TraditionForm({
           </div>
         </div>
         <div className="flex justify-end gap-2 items-center">
-          <Button asChild disabled={loading} variant="secondary">
+          <Button
+            asChild
+            disabled={loading}
+            variant="secondary"
+            className={cn("", loading && "pointer-events-none")}
+          >
             <Link href="/admin/traditions">Cancel</Link>
           </Button>
           <Button disabled={loading} type="submit">
-            Submit
+            {mode === "patch" ? "Update" : "Create"}
           </Button>
         </div>
       </form>

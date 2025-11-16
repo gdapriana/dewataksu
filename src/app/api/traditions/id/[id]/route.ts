@@ -57,17 +57,18 @@ export async function PATCH(
       select: { id: true },
     });
     if (!checkItem) return ErrorResponseMessage.NOT_FOUND("CATEGORY");
+
+    if (valdatedBody.content === "") valdatedBody.content = undefined;
+    if (valdatedBody.address === "") valdatedBody.address = null;
+    if (valdatedBody.districtId === "") valdatedBody.districtId = null;
+    if (valdatedBody.coverId === "") valdatedBody.coverId = null;
+
     let newSlug = undefined;
     if (valdatedBody.name) {
       newSlug = slugify(valdatedBody.name, slugifySetting);
       const checkSlug = await table.findFirst({ where: { slug: newSlug } });
       if (checkSlug) return ErrorResponseMessage.ALREADY_EXISTS("tradition");
     }
-
-    if (valdatedBody.content === "") valdatedBody.content = undefined;
-    if (valdatedBody.address === "") valdatedBody.address = null;
-    if (valdatedBody.districtId === "") valdatedBody.districtId = null;
-    if (valdatedBody.coverId === "") valdatedBody.coverId = null;
 
     const updated = await table.update({
       where: { id },
@@ -79,6 +80,43 @@ export async function PATCH(
     return NextResponse.json({
       ...apiSuccessResponse("UPDATE", "TRADITION"),
       result: updated,
+    });
+  } catch (e) {
+    if (e instanceof ZodError) return ErrorResponseMessage.ZOD_ERROR(e);
+  }
+  return ErrorResponseMessage.INTERNAL_SERVER_ERROR();
+}
+
+export async function DELETE(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session) return ErrorResponseMessage.FORBIDDEN();
+    if (session.user.role !== "ADMIN") return ErrorResponseMessage.FORBIDDEN();
+
+    const { id } = await context.params;
+    const valdatedBody = validateRequest(validation.DELETE, id);
+    const checkItem = await table.findUnique({
+      where: { id: valdatedBody },
+      select: {
+        id: true,
+      },
+    });
+    if (!checkItem) return ErrorResponseMessage.NOT_FOUND("TRADITION");
+    const deleted = await table.delete({
+      where: { id },
+      select: {
+        id: true,
+      },
+    });
+    return NextResponse.json({
+      ...apiSuccessResponse("DELETE", "TRADITION"),
+      result: deleted,
     });
   } catch (e) {
     if (e instanceof ZodError) return ErrorResponseMessage.ZOD_ERROR(e);

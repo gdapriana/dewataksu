@@ -8,10 +8,9 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { notFound } from "next/navigation";
 import { DistrictRequests } from "@/utils/request/district.request";
-import DistrictForm from "@/app/(root)/admin/districts/_components/form";
 import { TraditionRequests } from "@/utils/request/tradition.request";
-import TraditionForm from "@/app/(root)/admin/traditions/_components/form";
 import { DistrictRelation, Pagination } from "@/utils/types";
+import TraditionForm from "@/app/(root)/admin/traditions/_components/form";
 
 const pageInfo = {
   name: "Traditions",

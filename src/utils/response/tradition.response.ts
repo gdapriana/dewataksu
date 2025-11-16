@@ -7,6 +7,7 @@ export class TraditionResponses {
     description: true,
     districtId: true,
     slug: true,
+    isPublished: true,
     address: true,
     _count: true,
     district: {
@@ -48,6 +49,7 @@ export class TraditionResponses {
     name: true,
     description: true,
     address: true,
+    isPublished: true,
     slug: true,
     _count: true,
     district: {

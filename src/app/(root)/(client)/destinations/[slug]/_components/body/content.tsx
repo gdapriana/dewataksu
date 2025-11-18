@@ -61,7 +61,7 @@ export default function DestinationContent({
         </div>
 
         <p className="text-muted-foreground text-sm md:text-base">
-          {item.content}
+          {item.description}
         </p>
 
         {item.tags && (

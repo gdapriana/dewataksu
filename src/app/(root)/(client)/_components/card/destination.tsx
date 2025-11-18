@@ -145,7 +145,7 @@ export function DestinationMiniCard({
         <div className="flex flex-1 flex-col justify-center items-start">
           <h3 className="font-bold">{item.name}</h3>
           <p className="line-clamp-2 text-sm text-muted-foreground">
-            {item.content}
+            {item.description}
           </p>
         </div>
       </div>

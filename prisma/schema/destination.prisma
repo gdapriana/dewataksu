@@ -2,7 +2,7 @@ model Destination {
     id          String  @id @default(cuid())
     name        String
     slug        String  @unique
-    content     String?
+    description String?
     address     String?
     mapUrl      String?
     price       Int?    @default(0)

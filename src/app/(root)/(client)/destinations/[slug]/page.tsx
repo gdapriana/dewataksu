@@ -29,7 +29,7 @@ export default async function Page({
     success: boolean;
     result: DestinationRelation;
     message: string;
-  } = await DestinationRequests.GET(slug);
+  } = await DestinationRequests.GETSlug(slug);
 
   if (!destination) return notFound();
   if (destination && !destination.success) return notFound();

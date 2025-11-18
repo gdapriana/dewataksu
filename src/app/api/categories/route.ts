@@ -44,7 +44,6 @@ export async function GET(req: NextRequest) {
       table.findMany({
         where,
         skip,
-        take: limit,
         orderBy,
         select: response.GETs,
       }),

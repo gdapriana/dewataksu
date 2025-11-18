@@ -41,6 +41,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Link from "next/link";
+import DeleteDestinationAlert from "@/app/(root)/_components/alert/delete/destination";
 
 export default function DestinationsTable({
   districts,
@@ -251,9 +253,9 @@ export default function DestinationsTable({
                         {des.name}
                       </p>
                     </CustomTooltip>
-                    <CustomTooltip content={des.content}>
+                    <CustomTooltip content={des.description}>
                       <p className="line-clamp-1 max-w-[200px] text-muted-foreground overflow-ellipsis w-full">
-                        {des.content}
+                        {des.description}
                       </p>
                     </CustomTooltip>
                   </TableCell>
@@ -285,7 +287,7 @@ export default function DestinationsTable({
                     )}
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-1 flex-wrap justify-start items-center">
+                    <div className="flex gap-1 justify-start items-center">
                       <CustomTooltip content={`${des._count.likes} likes`}>
                         <Badge variant="secondary">
                           <Heart /> {des._count.likes}
@@ -315,21 +317,21 @@ export default function DestinationsTable({
                   </TableCell>
 
                   <TableCell>
-                    <div className="flex justify-end items-center flex-wrap gap-1">
+                    <div className="flex justify-end items-center gap-1">
                       <CustomTooltip content="View">
                         <Button variant="ghost" size="icon">
                           <Eye className="w-4 h-4" />
                         </Button>
                       </CustomTooltip>
                       <CustomTooltip content="Edit">
-                        <Button variant="ghost" size="icon">
-                          <Pencil className="w-4 h-4" />
+                        <Button asChild variant="ghost" size="icon">
+                          <Link href={`/admin/destinations/${des.id}`}>
+                            <Pencil className="w-4 h-4" />
+                          </Link>
                         </Button>
                       </CustomTooltip>
                       <CustomTooltip content="Delete">
-                        <Button variant="ghost" size="icon">
-                          <Trash2 className="w-4 h-4 text-red-500" />
-                        </Button>
+                        <DeleteDestinationAlert item={des} />
                       </CustomTooltip>
                     </div>
                   </TableCell>

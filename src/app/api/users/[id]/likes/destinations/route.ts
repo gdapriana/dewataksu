@@ -61,7 +61,9 @@ export async function GET(
     if (validatedQuery.search) {
       where.OR = [
         { name: { contains: validatedQuery.search, mode: "insensitive" } },
-        { content: { contains: validatedQuery.search, mode: "insensitive" } },
+        {
+          description: { contains: validatedQuery.search, mode: "insensitive" },
+        },
         { address: { contains: validatedQuery.search, mode: "insensitive" } },
         {
           category: {
@@ -90,7 +92,9 @@ export async function GET(
     if (validatedQuery.search) {
       where.OR = [
         { name: { contains: validatedQuery.search, mode: "insensitive" } },
-        { content: { contains: validatedQuery.search, mode: "insensitive" } },
+        {
+          description: { contains: validatedQuery.search, mode: "insensitive" },
+        },
         { address: { contains: validatedQuery.search, mode: "insensitive" } },
         {
           category: {
